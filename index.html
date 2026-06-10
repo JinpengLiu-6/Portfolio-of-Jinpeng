@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="Jinpeng Liu's interactive web resume: software engineering, HCI, projects, experience, skills, and contact information."
+    />
+    <meta name="theme-color" content="#07070b" />
+    <meta property="og:title" content="Jinpeng Liu | Interactive Portfolio" />
+    <meta
+      property="og:description"
+      content="Explore Jinpeng Liu's experience, projects, skills, and recruiter assistant in an OS-inspired interactive resume."
+    />
+    <meta property="og:type" content="website" />
+    <title>Jinpeng Liu | Interactive Portfolio</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&family=Space+Grotesk:wght@500;600;700&display=swap"
+      rel="stylesheet"
+    />
+
+    <link rel="stylesheet" href="/tokens.css" />
+    <link rel="stylesheet" href="/styles.css" />
+    <link rel="stylesheet" href="/modules.css" />
+  </head>
+  <body>
+    <div id="root"></div>
+
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+    <script type="text/babel" data-presets="react" src="/ui.jsx"></script>
+    <script type="text/babel" data-presets="react" src="/data.js"></script>
+    <script type="text/babel" data-presets="react" src="/modules-core.jsx"></script>
+    <script type="text/babel" data-presets="react" src="/modules-work.jsx"></script>
+    <script type="text/babel" data-presets="react" src="/modules-skills.jsx"></script>
+    <script type="text/babel" data-presets="react" src="/modules-ai.jsx"></script>
+    <script type="text/babel" data-presets="react" src="/shell.jsx"></script>
+    <script type="text/babel" data-presets="react" src="/app.jsx"></script>
+  </body>
+</html>

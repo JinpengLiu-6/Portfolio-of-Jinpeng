@@ -1,0 +1,124 @@
+/* ============================================================
+   Jinpeng OS — Design Tokens
+   Dark, technical, premium. Violet signature accent.
+   ============================================================ */
+
+:root {
+  /* --- Canvas / surfaces (deep near-black, faint violet tint) --- */
+  --bg-0: #07070b;          /* deepest, wallpaper base */
+  --bg-1: #0a0a11;          /* desktop */
+  --bg-2: #101019;          /* window body */
+  --bg-3: #16161f;          /* raised element */
+  --bg-4: #1d1d28;          /* hover */
+
+  /* Glass surfaces */
+  --glass: rgba(22, 22, 32, 0.72);
+  --glass-strong: rgba(16, 16, 24, 0.86);
+  --glass-light: rgba(40, 40, 56, 0.40);
+
+  /* Borders / hairlines */
+  --line: rgba(255, 255, 255, 0.07);
+  --line-2: rgba(255, 255, 255, 0.11);
+  --line-3: rgba(255, 255, 255, 0.16);
+
+  /* --- Text --- */
+  --tx-0: #f3f3f7;          /* primary */
+  --tx-1: #b6b6c4;          /* secondary */
+  --tx-2: #7c7c8c;          /* tertiary */
+  --tx-3: #54545f;          /* faint / disabled */
+
+  /* --- Accent: violet --- */
+  --ac: #6e62f7;
+  --ac-bright: #8b80ff;
+  --ac-dim: #5b50d6;
+  --ac-deep: #38329a;
+  --ac-glow: rgba(110, 98, 247, 0.45);
+  --ac-wash: rgba(110, 98, 247, 0.12);
+  --ac-line: rgba(110, 98, 247, 0.32);
+
+  /* Supporting signal colors (low saturation, matched L/C) */
+  --ok: #3ecf8e;
+  --warn: #e8b14a;
+  --info: #54a8ff;
+  --rose: #ff6a8a;
+
+  /* --- Radius --- */
+  --r-xs: 6px;
+  --r-sm: 9px;
+  --r-md: 13px;
+  --r-lg: 18px;
+  --r-xl: 24px;
+  --r-2xl: 32px;
+
+  /* --- Shadows --- */
+  --sh-win: 0 1px 0 rgba(255,255,255,0.06) inset,
+            0 30px 80px -20px rgba(0,0,0,0.75),
+            0 12px 40px -12px rgba(0,0,0,0.6);
+  --sh-pop: 0 1px 0 rgba(255,255,255,0.07) inset,
+            0 24px 60px -16px rgba(0,0,0,0.8);
+  --sh-glow: 0 0 0 1px var(--ac-line), 0 8px 30px -6px var(--ac-glow);
+
+  /* --- Type --- */
+  --f-sans: "Hanken Grotesk", ui-sans-serif, system-ui, -apple-system, sans-serif;
+  --f-disp: "Space Grotesk", var(--f-sans);
+  --f-mono: "JetBrains Mono", ui-monospace, "SF Mono", Menlo, monospace;
+
+  /* --- Motion --- */
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+  --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+* { box-sizing: border-box; }
+html, body { margin: 0; padding: 0; height: 100%; }
+
+body {
+  font-family: var(--f-sans);
+  background: var(--bg-0);
+  color: var(--tx-0);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  overflow: hidden;
+  font-feature-settings: "ss01", "cv01";
+}
+
+#root { height: 100vh; width: 100vw; }
+
+::selection { background: var(--ac-glow); color: #fff; }
+
+/* Scrollbars */
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb {
+  background: rgba(255,255,255,0.09);
+  border-radius: 99px;
+  border: 2px solid transparent;
+  background-clip: padding-box;
+}
+::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.18); background-clip: padding-box; }
+
+.mono { font-family: var(--f-mono); }
+.disp { font-family: var(--f-disp); }
+
+/* shared keyframes */
+@keyframes jp-float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-6px); }
+}
+@keyframes jp-pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.4; }
+}
+@keyframes jp-spin { to { transform: rotate(360deg); } }
+@keyframes jp-fade-up {
+  from { opacity: 0; transform: translateY(14px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@keyframes jp-shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
+}

@@ -1,0 +1,194 @@
+/* ============================================================
+   Jinpeng OS — Shell & component styles
+   ============================================================ */
+
+/* ---------------- Desktop / wallpaper ---------------- */
+.jp-desktop {
+  position: fixed; inset: 0;
+  background:
+    radial-gradient(120% 90% at 78% -10%, rgba(110,98,247,0.16), transparent 55%),
+    radial-gradient(100% 80% at 8% 110%, rgba(84,168,255,0.08), transparent 55%),
+    linear-gradient(180deg, var(--bg-1), var(--bg-0));
+  overflow: hidden;
+}
+.jp-wall-grid {
+  position: absolute; inset: -2px;
+  background-image:
+    linear-gradient(rgba(255,255,255,0.022) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,0.022) 1px, transparent 1px);
+  background-size: 46px 46px;
+  mask-image: radial-gradient(120% 100% at 50% 30%, #000 30%, transparent 92%);
+  pointer-events: none;
+}
+.jp-wall-noise {
+  position: absolute; inset: 0; pointer-events: none; opacity: 0.4;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.035'/%3E%3C/svg%3E");
+}
+.jp-wall-orb {
+  position: absolute; border-radius: 50%; filter: blur(60px); opacity: 0.5;
+  pointer-events: none; animation: jp-float 14s ease-in-out infinite;
+}
+
+/* ---------------- Menu bar ---------------- */
+.jp-menubar {
+  position: fixed; top: 0; left: 0; right: 0; height: 34px; z-index: 9000;
+  display: flex; align-items: center; gap: 4px; padding: 0 12px;
+  background: rgba(8,8,13,0.55); backdrop-filter: blur(24px) saturate(160%);
+  -webkit-backdrop-filter: blur(24px) saturate(160%);
+  border-bottom: 1px solid var(--line);
+  font-size: 12.5px; color: var(--tx-1); user-select: none;
+}
+.jp-mb-logo { display: flex; align-items: center; gap: 8px; font-weight: 700; color: var(--tx-0);
+  font-family: var(--f-disp); letter-spacing: 0.2px; padding: 0 10px 0 4px; }
+.jp-mb-mark { width: 16px; height: 16px; border-radius: 5px;
+  background: linear-gradient(135deg, var(--ac-bright), var(--ac-deep));
+  box-shadow: 0 0 0 1px rgba(255,255,255,0.14) inset, 0 2px 8px var(--ac-glow); }
+.jp-mb-item { padding: 4px 10px; border-radius: 7px; cursor: pointer; transition: background 0.15s, color 0.15s; }
+.jp-mb-item:hover { background: rgba(255,255,255,0.06); color: var(--tx-0); }
+.jp-mb-spacer { flex: 1; }
+.jp-mb-right { display: flex; align-items: center; gap: 2px; }
+.jp-mb-stat { display: flex; align-items: center; gap: 6px; padding: 4px 10px; border-radius: 7px;
+  font-family: var(--f-mono); font-size: 11.5px; }
+.jp-mb-live { width: 7px; height: 7px; border-radius: 50%; background: var(--ok);
+  box-shadow: 0 0 8px var(--ok); animation: jp-pulse 2.4s ease-in-out infinite; }
+.jp-mb-kbd { display: inline-flex; align-items: center; gap: 4px; padding: 3px 8px; border-radius: 7px;
+  border: 1px solid var(--line-2); background: rgba(255,255,255,0.03); cursor: pointer;
+  font-family: var(--f-mono); font-size: 11px; color: var(--tx-1); transition: all 0.15s; }
+.jp-mb-kbd:hover { border-color: var(--ac-line); color: var(--tx-0); }
+
+/* ---------------- Window ---------------- */
+.jp-win {
+  position: fixed; display: flex; flex-direction: column;
+  background: var(--glass-strong); backdrop-filter: blur(28px) saturate(150%);
+  -webkit-backdrop-filter: blur(28px) saturate(150%);
+  border: 1px solid var(--line-2); border-radius: var(--r-lg);
+  box-shadow: var(--sh-win); overflow: hidden;
+  animation: jp-win-in 0.42s var(--ease-out);
+}
+@keyframes jp-win-in {
+  from { opacity: 0; transform: translateY(16px) scale(0.97); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+.jp-win.closing { animation: jp-win-out 0.22s var(--ease-in-out) both; }
+@keyframes jp-win-out {
+  to { opacity: 0; transform: translateY(10px) scale(0.97); }
+}
+.jp-win-bar {
+  height: 44px; flex: none; display: flex; align-items: center; gap: 12px; padding: 0 14px;
+  border-bottom: 1px solid var(--line); cursor: grab;
+  background: linear-gradient(180deg, rgba(255,255,255,0.025), transparent);
+}
+.jp-win-bar:active { cursor: grabbing; }
+.jp-lights { display: flex; gap: 8px; align-items: center; }
+.jp-light { width: 12px; height: 12px; border-radius: 50%; border: none; cursor: pointer;
+  display: grid; place-items: center; color: rgba(0,0,0,0.5); transition: filter 0.15s; }
+.jp-light svg { opacity: 0; transition: opacity 0.12s; }
+.jp-lights:hover .jp-light svg { opacity: 1; }
+.jp-light.r { background: #ff5f57; }
+.jp-light.y { background: #febc2e; }
+.jp-light.g { background: #28c840; }
+.jp-light:hover { filter: brightness(1.1); }
+.jp-win-title { display: flex; align-items: center; gap: 9px; font-size: 13px; font-weight: 600;
+  color: var(--tx-0); font-family: var(--f-disp); letter-spacing: 0.1px; }
+.jp-win-title .jp-wt-ico { color: var(--ac-bright); display: flex; }
+.jp-win-sub { color: var(--tx-2); font-weight: 400; font-size: 12px; font-family: var(--f-sans); }
+.jp-win-body { flex: 1; overflow: auto; position: relative; }
+.jp-win.focused { box-shadow: var(--sh-win), 0 0 0 1px var(--ac-line); }
+
+/* resize handle */
+.jp-resize { position: absolute; width: 18px; height: 18px; right: 0; bottom: 0; cursor: nwse-resize; z-index: 5; }
+.jp-resize::after { content: ""; position: absolute; right: 4px; bottom: 4px; width: 7px; height: 7px;
+  border-right: 2px solid var(--line-3); border-bottom: 2px solid var(--line-3); border-radius: 0 0 3px 0; }
+
+/* ---------------- Dock ---------------- */
+.jp-dock-wrap { position: fixed; bottom: 14px; left: 0; right: 0; display: flex; justify-content: center; z-index: 8000; pointer-events: none; }
+.jp-dock { pointer-events: auto; display: flex; align-items: flex-end; gap: 6px; padding: 9px 12px;
+  background: rgba(14,14,22,0.6); backdrop-filter: blur(30px) saturate(170%);
+  -webkit-backdrop-filter: blur(30px) saturate(170%);
+  border: 1px solid var(--line-2); border-radius: 20px;
+  box-shadow: 0 1px 0 rgba(255,255,255,0.06) inset, 0 18px 50px -10px rgba(0,0,0,0.7); }
+.jp-dock-item { position: relative; width: 50px; height: 50px; border-radius: 14px; cursor: pointer;
+  display: grid; place-items: center; color: var(--tx-1);
+  background: linear-gradient(180deg, rgba(255,255,255,0.05), rgba(255,255,255,0.015));
+  border: 1px solid var(--line); transition: transform 0.25s var(--ease-spring), background 0.2s, color 0.2s, border-color 0.2s;
+}
+.jp-dock-item:hover { transform: translateY(-10px) scale(1.08); color: var(--tx-0);
+  background: linear-gradient(180deg, rgba(255,255,255,0.09), rgba(255,255,255,0.03)); border-color: var(--line-3); }
+.jp-dock-item:active { transform: translateY(-4px) scale(1.0); }
+.jp-dock-item .jp-dock-dot { position: absolute; bottom: -5px; left: 50%; transform: translateX(-50%);
+  width: 4px; height: 4px; border-radius: 50%; background: var(--ac-bright); opacity: 0; transition: opacity 0.2s; }
+.jp-dock-item.open .jp-dock-dot { opacity: 1; }
+.jp-dock-tip { position: absolute; bottom: 64px; left: 50%; transform: translateX(-50%) translateY(6px);
+  padding: 5px 10px; border-radius: 8px; background: var(--glass-strong); border: 1px solid var(--line-2);
+  font-size: 12px; font-weight: 600; white-space: nowrap; opacity: 0; pointer-events: none;
+  transition: opacity 0.18s, transform 0.18s; box-shadow: var(--sh-pop); }
+.jp-dock-item:hover .jp-dock-tip { opacity: 1; transform: translateX(-50%) translateY(0); }
+.jp-dock-sep { width: 1px; height: 36px; background: var(--line-2); margin: 0 4px; align-self: center; }
+
+/* ---------------- Command palette ---------------- */
+.jp-palette-scrim { position: fixed; inset: 0; z-index: 9500; background: rgba(4,4,8,0.5);
+  backdrop-filter: blur(6px); display: flex; align-items: flex-start; justify-content: center;
+  padding-top: 14vh; animation: jp-fade 0.18s ease both; }
+@keyframes jp-fade { from { opacity: 0; } to { opacity: 1; } }
+.jp-palette { width: min(620px, 92vw); background: var(--glass-strong);
+  backdrop-filter: blur(30px) saturate(160%); -webkit-backdrop-filter: blur(30px) saturate(160%);
+  border: 1px solid var(--line-3); border-radius: var(--r-lg); box-shadow: var(--sh-pop);
+  overflow: hidden; animation: jp-pal-in 0.24s var(--ease-out) both; }
+@keyframes jp-pal-in { from { opacity: 0; transform: translateY(-12px) scale(0.98); } to { opacity: 1; transform: none; } }
+.jp-pal-input { display: flex; align-items: center; gap: 11px; padding: 16px 18px; border-bottom: 1px solid var(--line); }
+.jp-pal-input input { flex: 1; background: none; border: none; outline: none; color: var(--tx-0);
+  font-size: 16px; font-family: var(--f-sans); }
+.jp-pal-input input::placeholder { color: var(--tx-2); }
+.jp-pal-list { max-height: 46vh; overflow: auto; padding: 8px; }
+.jp-pal-sec { font-size: 10.5px; text-transform: uppercase; letter-spacing: 0.12em; color: var(--tx-2);
+  padding: 10px 12px 6px; font-family: var(--f-mono); }
+.jp-pal-row { display: flex; align-items: center; gap: 12px; padding: 10px 12px; border-radius: var(--r-sm);
+  cursor: pointer; color: var(--tx-1); }
+.jp-pal-row .jp-pal-ico { width: 30px; height: 30px; border-radius: 8px; display: grid; place-items: center;
+  background: rgba(255,255,255,0.04); border: 1px solid var(--line); flex: none; }
+.jp-pal-row.sel { background: var(--ac-wash); color: var(--tx-0); }
+.jp-pal-row.sel .jp-pal-ico { background: var(--ac-wash); border-color: var(--ac-line); color: var(--ac-bright); }
+.jp-pal-row .jp-pal-meta { flex: 1; }
+.jp-pal-row .jp-pal-name { font-size: 14px; font-weight: 600; color: var(--tx-0); }
+.jp-pal-row .jp-pal-desc { font-size: 12px; color: var(--tx-2); }
+.jp-pal-row .jp-pal-enter { font-family: var(--f-mono); font-size: 11px; color: var(--tx-2); opacity: 0; }
+.jp-pal-row.sel .jp-pal-enter { opacity: 1; }
+.jp-pal-foot { display: flex; gap: 16px; padding: 9px 16px; border-top: 1px solid var(--line);
+  font-family: var(--f-mono); font-size: 11px; color: var(--tx-2); }
+.jp-pal-foot kbd { padding: 1px 5px; border: 1px solid var(--line-2); border-radius: 5px; background: rgba(255,255,255,0.03); }
+
+/* ---------------- Placeholder ---------------- */
+.jp-ph { position: relative; width: 100%; border-radius: var(--r-md); overflow: hidden;
+  background: var(--bg-2); border: 1px solid var(--line); display: grid; place-items: center; }
+.jp-ph-grid { position: absolute; inset: 0;
+  background-image: repeating-linear-gradient(135deg, rgba(255,255,255,0.035) 0 1px, transparent 1px 10px); }
+.jp-ph-glow { position: absolute; inset: 0; }
+.jp-ph-label { position: relative; display: flex; align-items: center; gap: 8px; font-size: 11.5px;
+  color: var(--tx-2); letter-spacing: 0.04em; padding: 6px 12px; border-radius: 99px;
+  background: rgba(8,8,13,0.6); border: 1px solid var(--line); }
+.jp-ph-dot { width: 7px; height: 7px; border-radius: 50%; }
+
+/* ---------------- Generic module scaffolding ---------------- */
+.jp-mod { padding: 0; color: var(--tx-0); min-height: 100%; }
+.jp-mod-head { padding: 26px 30px 18px; }
+.jp-eyebrow { font-family: var(--f-mono); font-size: 11px; letter-spacing: 0.16em; text-transform: uppercase;
+  color: var(--ac-bright); display: flex; align-items: center; gap: 8px; }
+.jp-h1 { font-family: var(--f-disp); font-size: 27px; font-weight: 700; letter-spacing: -0.01em; margin: 10px 0 6px; }
+.jp-sub { color: var(--tx-1); font-size: 14px; max-width: 56ch; line-height: 1.55; }
+.jp-chip { display: inline-flex; align-items: center; gap: 6px; padding: 5px 11px; border-radius: 99px;
+  font-size: 12px; font-family: var(--f-mono); color: var(--tx-1); background: rgba(255,255,255,0.035);
+  border: 1px solid var(--line); }
+.jp-card { background: rgba(255,255,255,0.022); border: 1px solid var(--line); border-radius: var(--r-md);
+  transition: border-color 0.2s, background 0.2s, transform 0.2s; }
+.jp-card:hover { border-color: var(--line-3); background: rgba(255,255,255,0.04); }
+.jp-divider { height: 1px; background: var(--line); margin: 0 30px; }
+.jp-link { color: var(--ac-bright); text-decoration: none; display: inline-flex; align-items: center; gap: 6px;
+  border-bottom: 1px solid transparent; transition: border-color 0.2s; }
+.jp-link:hover { border-color: var(--ac-line); }
+
+/* mobile launcher */
+.jp-mobile { display: none; }
+@media (max-width: 720px) {
+  .jp-dock { gap: 3px; padding: 7px 8px; }
+  .jp-dock-item { width: 42px; height: 42px; }
+}
