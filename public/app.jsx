@@ -75,6 +75,7 @@ function App() {
   const openIds = wins.filter((w) => !w.minimized).map((w) => w.id);
   const time = now.toLocaleTimeString("en-GB", { hour: "2-digit", minute: "2-digit" });
   const date = now.toLocaleDateString("en-GB", { weekday: "short", day: "numeric", month: "short" });
+  const t = (key, fallback) => window.JP_I18N ? window.JP_I18N.t(key, fallback) : (fallback || key);
 
   return (
     <div className="jp-desktop">
@@ -112,8 +113,8 @@ function App() {
       {openIds.length === 0 && (
         <div className="jp-empty">
           <div className="jp-empty-mark"><span className="jp-mb-mark" style={{ width: 40, height: 40, borderRadius: 12 }} /></div>
-          <div className="jp-empty-h disp">Welcome to Jinpeng OS</div>
-          <div className="jp-empty-s">Open a module from the dock — or press <kbd>⌘K</kbd></div>
+          <div className="jp-empty-h disp">{t("ui.empty.title", "Welcome to Jinpeng OS")}</div>
+          <div className="jp-empty-s">{t("ui.empty.subtitle", "Open a module from the dock - or press")} <kbd>⌘K</kbd></div>
         </div>
       )}
 

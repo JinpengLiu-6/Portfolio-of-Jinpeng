@@ -5,6 +5,7 @@ const { useState: uSS, useMemo: uMS } = React;
 
 function SkillStack() {
   const { skills, skillCats, projects, experience } = window.JP;
+  const t = window.JP_I18N ? window.JP_I18N.t : (key, fallback) => fallback || key;
   const [sel, setSel] = uSS(skills[0]?.id);
   const cur = skills.find((s) => s.id === sel) || skills[0];
   const curCat = skillCats[cur.cat];
@@ -34,9 +35,9 @@ function SkillStack() {
   return (
     <div className="jp-mod ss">
       <div className="ss-head">
-        <div className="jp-eyebrow"><Icon name="skills" size={13} /> SKILL STACK</div>
-        <h1 className="jp-h1">The stack.</h1>
-        <p className="jp-sub">A cleaner scan of the tools, product skills, and AI workflows Jinpeng uses to turn ideas into working products.</p>
+        <div className="jp-eyebrow"><Icon name="skills" size={13} /> {t("skills.eyebrow", "SKILL STACK")}</div>
+        <h1 className="jp-h1">{t("skills.title", "The stack.")}</h1>
+        <p className="jp-sub">{t("skills.subtitle", "A cleaner scan of the tools, product skills, and AI workflows Jinpeng uses to turn ideas into working products.")}</p>
       </div>
 
       <div className="ss-shell">
@@ -74,16 +75,16 @@ function SkillStack() {
             <p className="ss-blurb">{cur.blurb}</p>
 
             <DetailRow
-              label="USED IN"
-              values={projectNames.length ? projectNames : ["Cross-cutting - applied across work rather than one project."]}
+              label={t("skills.used", "USED IN")}
+              values={projectNames.length ? projectNames : [t("skills.cross", "Cross-cutting - applied across work rather than one project.")]}
               tone="accent"
             />
             <DetailRow
-              label="PROVEN AT"
-              values={expNames.length ? expNames : ["Self-driven / personal projects."]}
+              label={t("skills.proven", "PROVEN AT")}
+              values={expNames.length ? expNames : [t("skills.self", "Self-driven / personal projects.")]}
               tone="solid"
             />
-            <DetailRow label="PAIRS WITH" values={cur.tech.length ? cur.tech : ["Product judgment"]} tone="ghost" />
+            <DetailRow label={t("skills.pairs", "PAIRS WITH")} values={cur.tech.length ? cur.tech : [t("skills.judgment", "Product judgment")]} tone="ghost" />
           </DetailWrapper>
         </section>
       </div>

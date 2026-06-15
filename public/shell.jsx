@@ -19,15 +19,16 @@ const WIN_DEFAULTS = {
 
 /* ---------------- BOOT SEQUENCE ---------------- */
 function Boot({ onDone }) {
+  const t = window.JP_I18N ? window.JP_I18N.t : (key, fallback) => fallback || key;
   const steps = [
-    "Initializing kernel",
-    "Loading About Me",
-    "Mounting Resume Preview",
-    "Mounting Experience Database",
-    "Loading Project Laboratory",
-    "Calibrating Skill Universe",
-    "Waking AI modules",
-    "Compositing interface",
+    t("ui.boot.steps.0", "Initializing kernel"),
+    t("ui.boot.steps.1", "Loading About Me"),
+    t("ui.boot.steps.2", "Mounting Resume Preview"),
+    t("ui.boot.steps.3", "Mounting Experience Database"),
+    t("ui.boot.steps.4", "Loading Project Laboratory"),
+    t("ui.boot.steps.5", "Calibrating Skill Universe"),
+    t("ui.boot.steps.6", "Waking AI modules"),
+    t("ui.boot.steps.7", "Compositing interface"),
   ];
   const [i, setI] = uSh(0);
   const [prog, setProg] = uSh(0);
@@ -62,7 +63,7 @@ function Boot({ onDone }) {
           <div className="jp-boot-ring" />
         </div>
         <div className="jp-boot-name disp">Jinpeng OS</div>
-        <div className="jp-boot-ver mono">v1.0.0 · booting</div>
+        <div className="jp-boot-ver mono">{t("ui.boot.version", "v1.0.0 · booting")}</div>
 
         <div className="jp-boot-log mono">
           {steps.slice(0, i).map((s, k) => (
@@ -75,13 +76,14 @@ function Boot({ onDone }) {
 
         <div className="jp-boot-bar"><div className="jp-boot-fill" style={{ width: prog + "%" }} /></div>
       </div>
-      <button className="jp-boot-skip mono" onClick={finish}>skip →</button>
+      <button className="jp-boot-skip mono" onClick={finish}>{t("ui.boot.skip", "skip →")}</button>
     </div>
   );
 }
 
 /* ---------------- WINDOW ---------------- */
 function OSWindow({ win, mod, focused, isMobile, onFocus, onClose, onMin, onMax, onGeo, openModule }) {
+  const t = window.JP_I18N ? window.JP_I18N.t : (key, fallback) => fallback || key;
   const Content = window.JP_MODULES[win.id];
   const barRef = uRh(null);
   const winRef = uRh(null);
@@ -130,9 +132,9 @@ function OSWindow({ win, mod, focused, isMobile, onFocus, onClose, onMin, onMax,
       style={style} onMouseDown={() => onFocus(win.id)}>
       <div ref={barRef} className="jp-win-bar" onPointerDown={startDrag} onDoubleClick={() => !isMobile && onMax(win.id)}>
         <div className="jp-lights" data-no-drag>
-          <button className="jp-light r" onClick={() => onClose(win.id)} title="Close"><Icon name="close" size={8} /></button>
-          <button className="jp-light y" onClick={() => onMin(win.id)} title="Minimize"><Icon name="min" size={8} /></button>
-          <button className="jp-light g" onClick={() => onMax(win.id)} title="Zoom"><Icon name="max" size={8} /></button>
+          <button className="jp-light r" onClick={() => onClose(win.id)} title={t("ui.win.close", "Close")}><Icon name="close" size={8} /></button>
+          <button className="jp-light y" onClick={() => onMin(win.id)} title={t("ui.win.minimize", "Minimize")}><Icon name="min" size={8} /></button>
+          <button className="jp-light g" onClick={() => onMax(win.id)} title={t("ui.win.zoom", "Zoom")}><Icon name="max" size={8} /></button>
         </div>
         <div className="jp-win-title">
           <span className="jp-wt-ico"><Icon name={mod.icon} size={15} /></span>
@@ -151,6 +153,7 @@ function OSWindow({ win, mod, focused, isMobile, onFocus, onClose, onMin, onMax,
 /* ---------------- COMMAND PALETTE ---------------- */
 function Palette({ onClose, openModule, openWins }) {
   const { modules, profile } = window.JP;
+  const t = window.JP_I18N ? window.JP_I18N.t : (key, fallback) => fallback || key;
   const [q, setQ] = uSh("");
   const [sel, setSel] = uSh(0);
   const inRef = uRh(null);
@@ -158,9 +161,9 @@ function Palette({ onClose, openModule, openWins }) {
 
   const actions = [
     ...modules.map((m) => ({ type: "mod", id: m.id, name: m.name, desc: m.desc, icon: m.icon })),
-    { type: "link", id: "email", name: "Copy email", desc: profile.contact.email, icon: "mail", href: "mailto:" + profile.contact.email },
-    { type: "link", id: "github", name: "Open GitHub", desc: "JinpengLiu-6", icon: "github", href: profile.contact.github },
-    { type: "link", id: "linkedin", name: "Open LinkedIn", desc: "in/jinpeng-liu", icon: "linkedin", href: profile.contact.linkedin },
+    { type: "link", id: "email", name: t("palette.copyEmail", "Copy email"), desc: profile.contact.email, icon: "mail", href: "mailto:" + profile.contact.email },
+    { type: "link", id: "github", name: t("palette.github", "Open GitHub"), desc: "JinpengLiu-6", icon: "github", href: profile.contact.github },
+    { type: "link", id: "linkedin", name: t("palette.linkedin", "Open LinkedIn"), desc: "in/jinpeng-liu", icon: "linkedin", href: profile.contact.linkedin },
   ];
   const filtered = actions.filter((a) => (a.name + a.desc).toLowerCase().includes(q.toLowerCase()));
   uEh(() => setSel(0), [q]);
@@ -183,11 +186,11 @@ function Palette({ onClose, openModule, openWins }) {
         <div className="jp-pal-input">
           <Icon name="search" size={18} style={{ color: "var(--tx-2)" }} />
           <input ref={inRef} value={q} onChange={(e) => setQ(e.target.value)} onKeyDown={key}
-            placeholder="Search modules, actions, contact…" />
+            placeholder={t("ui.palette", "Search modules, actions, contact…")} />
           <span className="jp-chip mono" style={{ fontSize: 10 }}>ESC</span>
         </div>
         <div className="jp-pal-list">
-          <div className="jp-pal-sec">{q ? "Results" : "Modules & actions"}</div>
+          <div className="jp-pal-sec">{q ? t("ui.palette.results", "Results") : t("ui.palette.modules", "Modules & actions")}</div>
           {filtered.map((a, i) => (
             <div key={a.id} className={"jp-pal-row" + (i === sel ? " sel" : "")}
               onMouseEnter={() => setSel(i)} onClick={() => exec(a)}>
@@ -199,12 +202,12 @@ function Palette({ onClose, openModule, openWins }) {
               <span className="jp-pal-enter mono">↵</span>
             </div>
           ))}
-          {filtered.length === 0 && <div className="jp-pal-row" style={{ color: "var(--tx-2)" }}>No matches</div>}
+          {filtered.length === 0 && <div className="jp-pal-row" style={{ color: "var(--tx-2)" }}>{t("ui.palette.noMatches", "No matches")}</div>}
         </div>
         <div className="jp-pal-foot">
-          <span><kbd>↑</kbd><kbd>↓</kbd> navigate</span>
-          <span><kbd>↵</kbd> open</span>
-          <span><kbd>esc</kbd> close</span>
+          <span><kbd>↑</kbd><kbd>↓</kbd> {t("ui.palette.nav", "navigate")}</span>
+          <span><kbd>↵</kbd> {t("ui.palette.open", "open")}</span>
+          <span><kbd>esc</kbd> {t("ui.palette.close", "close")}</span>
         </div>
       </div>
     </div>

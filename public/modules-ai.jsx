@@ -31,17 +31,17 @@ ${prj}
 SKILLS: ${sk}`;
 }
 
-const SUGGESTED = [
-  "Is Jinpeng a good fit for a front-end role?",
-  "What makes him product-oriented?",
-  "Does he have full-stack experience?",
-  "When is he available, and where?",
-  "How does UX/HCI make him a better engineer?",
-];
-
 function AssistantModule() {
-  const [msgs, setMsgs] = uSA([
-    { role: "assistant", text: "Hi — I'm Jinpeng's Recruiter Assistant. Ask me anything about his experience, projects, stack, or availability." },
+  const t = window.JP_I18N ? window.JP_I18N.t : (key, fallback) => fallback || key;
+  const suggested = [
+    t("assistant.suggest.0", "Is Jinpeng a good fit for a front-end role?"),
+    t("assistant.suggest.1", "What makes him product-oriented?"),
+    t("assistant.suggest.2", "Does he have full-stack experience?"),
+    t("assistant.suggest.3", "When is he available, and where?"),
+    t("assistant.suggest.4", "How does UX/HCI make him a better engineer?"),
+  ];
+  const [msgs, setMsgs] = uSA(() => [
+    { role: "assistant", text: t("assistant.hello", "Hi - I'm Jinpeng's Recruiter Assistant. Ask me anything about his experience, projects, stack, or availability.") },
   ]);
   const [input, setInput] = uSA("");
   const [busy, setBusy] = uSA(false);
@@ -66,9 +66,9 @@ function AssistantModule() {
       } else {
         throw new Error("offline");
       }
-      setMsgs((m) => [...m, { role: "assistant", text: (text || "").trim() || "I'm not sure about that one — best to ask Jinpeng directly at jp.liu87@gmail.com." }]);
+      setMsgs((m) => [...m, { role: "assistant", text: (text || "").trim() || t("assistant.unsure", "I'm not sure about that one - best to ask Jinpeng directly at jp.liu87@gmail.com.") }]);
     } catch (e) {
-      setMsgs((m) => [...m, { role: "assistant", text: "I can't reach the live model right now, but here's what I can tell you: Jinpeng is an HCI-trained software engineer fluent across React/TypeScript frontends and Java/Python backends, available from 12 Sep 2026. Reach him at jp.liu87@gmail.com." }]);
+      setMsgs((m) => [...m, { role: "assistant", text: t("assistant.fallback", "I can't reach the live model right now, but here's what I can tell you: Jinpeng is an HCI-trained software engineer fluent across React/TypeScript frontends and Java/Python backends, available from 12 Sep 2026. Reach him at jp.liu87@gmail.com.") }]);
     } finally {
       setBusy(false);
     }
@@ -80,8 +80,8 @@ function AssistantModule() {
         <div className="ai-head-id">
           <div className="ai-orb"><Icon name="ai" size={18} /></div>
           <div>
-            <div className="ai-title disp">Recruiter Assistant</div>
-            <div className="ai-status"><span className="jp-mb-live" /> Live · powered by AI</div>
+            <div className="ai-title disp">{t("assistant.title", "Recruiter Assistant")}</div>
+            <div className="ai-status"><span className="jp-mb-live" /> {t("assistant.status", "Live · powered by AI")}</div>
           </div>
         </div>
       </div>
@@ -101,7 +101,7 @@ function AssistantModule() {
         )}
         {msgs.length <= 1 && !busy && (
           <div className="ai-suggest">
-            {SUGGESTED.map((s) => (
+            {suggested.map((s) => (
               <button key={s} className="ai-sug" onClick={() => ask(s)}>{s}</button>
             ))}
           </div>
@@ -111,7 +111,7 @@ function AssistantModule() {
       <div className="ai-input">
         <input value={input} onChange={(e) => setInput(e.target.value)}
           onKeyDown={(e) => e.key === "Enter" && ask()}
-          placeholder="Ask about Jinpeng…" disabled={busy} />
+          placeholder={t("assistant.placeholder", "Ask about Jinpeng...")} disabled={busy} />
         <button className="ai-send" onClick={() => ask()} disabled={busy || !input.trim()}>
           <Icon name="send" size={16} />
         </button>
@@ -123,9 +123,10 @@ function AssistantModule() {
 /* ---------------- DEVELOPER CONSOLE ---------------- */
 function ConsoleModule({ openModule }) {
   const { profile, experience, projects, skills, modules, terminal } = window.JP;
-  const [lines, setLines] = uSA([
-    { t: "sys", c: "Jinpeng OS - Command Center  v1.0.0" },
-    { t: "sys", c: "Type 'help' for a list of commands." },
+  const tr = window.JP_I18N ? window.JP_I18N.t : (key, fallback) => fallback || key;
+  const [lines, setLines] = uSA(() => [
+    { t: "sys", c: tr("terminal.sys", "Jinpeng OS - Command Center  v1.0.0") },
+    { t: "sys", c: tr("terminal.helpHint", "Type 'help' for a list of commands.") },
   ]);
   const [val, setVal] = uSA("");
   const [hist, setHist] = uSA([]);

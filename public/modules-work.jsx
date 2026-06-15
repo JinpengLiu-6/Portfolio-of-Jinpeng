@@ -22,6 +22,7 @@ function ProjectHero({ project, accent, big }) {
 
 function ProjectLab() {
   const { projects } = window.JP;
+  const t = window.JP_I18N ? window.JP_I18N.t : (key, fallback) => fallback || key;
   const [openId, setOpenId] = uSW(null);
   const proj = projects.find((p) => p.id === openId);
 
@@ -30,9 +31,9 @@ function ProjectLab() {
   return (
     <div className="jp-mod pl">
       <div className="jp-mod-head">
-        <div className="jp-eyebrow"><Icon name="lab" size={13} /> PROJECT LABORATORY</div>
-        <h1 className="jp-h1">Product & Engineering Projects</h1>
-        <p className="jp-sub">A collection of product ideas, enterprise UX work, frontend experiments and archive projects. Open any one for the full case study.</p>
+        <div className="jp-eyebrow"><Icon name="lab" size={13} /> {t("projects.eyebrow", "PROJECT LABORATORY")}</div>
+        <h1 className="jp-h1">{t("projects.title", "Product & Engineering Projects")}</h1>
+        <p className="jp-sub">{t("projects.subtitle", "A collection of product ideas, enterprise UX work, frontend experiments and archive projects. Open any one for the full case study.")}</p>
       </div>
       <div className="pl-gallery">
         {projects.map((p) => (
@@ -48,7 +49,7 @@ function ProjectLab() {
               <div className="pl-item-tags">
                 {p.tags.slice(0, 4).map((t) => <span key={t} className="pl-tag">{t}</span>)}
               </div>
-              <span className="pl-item-open">Open case study <Icon name="arrow" size={14} /></span>
+              <span className="pl-item-open">{t("projects.open", "Open case study")} <Icon name="arrow" size={14} /></span>
             </div>
           </button>
         ))}
@@ -58,18 +59,11 @@ function ProjectLab() {
 }
 
 function CaseStudy({ proj, onBack }) {
-  const sections = [
-    { id: "problem", label: "Problem" },
-    { id: "solution", label: "Solution" },
-    { id: "architecture", label: "Architecture" },
-    { id: "challenges", label: "Challenges" },
-    { id: "screens", label: "Screens" },
-    { id: "lessons", label: "Lessons" },
-  ];
+  const t = window.JP_I18N ? window.JP_I18N.t : (key, fallback) => fallback || key;
   return (
     <div className="jp-mod cs" style={{ "--p-ac": proj.accent }}>
       <div className="cs-bar">
-        <button className="cs-back" onClick={onBack}><Icon name="arrowL" size={16} /> Laboratory</button>
+        <button className="cs-back" onClick={onBack}><Icon name="arrowL" size={16} /> {t("case.back", "Laboratory")}</button>
         <div className="cs-bar-tags">
           {proj.tags.map((t) => <span key={t} className="pl-tag">{t}</span>)}
         </div>
@@ -86,17 +80,17 @@ function CaseStudy({ proj, onBack }) {
 
       <div className="cs-flow">
         <section className="cs-sec">
-          <div className="cs-sec-h"><span className="cs-sec-n mono">01</span> Problem</div>
+          <div className="cs-sec-h"><span className="cs-sec-n mono">01</span> {t("case.problem", "Problem")}</div>
           <p className="cs-text">{proj.problem}</p>
         </section>
 
         <section className="cs-sec">
-          <div className="cs-sec-h"><span className="cs-sec-n mono">02</span> Solution</div>
+          <div className="cs-sec-h"><span className="cs-sec-n mono">02</span> {t("case.solution", "Solution")}</div>
           <p className="cs-text accent">{proj.solution}</p>
         </section>
 
         <section className="cs-sec">
-          <div className="cs-sec-h"><span className="cs-sec-n mono">03</span> Architecture</div>
+          <div className="cs-sec-h"><span className="cs-sec-n mono">03</span> {t("case.architecture", "Architecture")}</div>
           <div className="cs-arch">
             {proj.architecture.map((a, i) => (
               <div key={a.label} className="cs-arch-node">
@@ -110,7 +104,7 @@ function CaseStudy({ proj, onBack }) {
         </section>
 
         <section className="cs-sec">
-          <div className="cs-sec-h"><span className="cs-sec-n mono">04</span> Technical challenges</div>
+          <div className="cs-sec-h"><span className="cs-sec-n mono">04</span> {t("case.challenges", "Technical challenges")}</div>
           <div className="cs-chal">
             {proj.challenges.map((c, i) => (
               <div key={i} className="cs-chal-row">
@@ -122,7 +116,7 @@ function CaseStudy({ proj, onBack }) {
         </section>
 
         <section className="cs-sec">
-          <div className="cs-sec-h"><span className="cs-sec-n mono">05</span> Screens</div>
+          <div className="cs-sec-h"><span className="cs-sec-n mono">05</span> {t("case.screens", "Screens")}</div>
           <div className="cs-screens">
             {(proj.images && proj.images.length ? proj.images.slice(1) : proj.screens.map((s) => ({ label: s }))).map((s) => (
               s.src ? (
@@ -135,11 +129,11 @@ function CaseStudy({ proj, onBack }) {
               )
             ))}
           </div>
-          <p className="cs-screens-note mono">selected product screens from the project</p>
+          <p className="cs-screens-note mono">{t("case.note", "selected product screens from the project")}</p>
         </section>
 
         <section className="cs-sec">
-          <div className="cs-sec-h"><span className="cs-sec-n mono">06</span> Lessons learned</div>
+          <div className="cs-sec-h"><span className="cs-sec-n mono">06</span> {t("case.lessons", "Lessons learned")}</div>
           <div className="cs-lesson">
             <Icon name="spark" size={18} style={{ color: "var(--p-ac)", flex: "none" }} />
             <p className="cs-text">{proj.lessons}</p>

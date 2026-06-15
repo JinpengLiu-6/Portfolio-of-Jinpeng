@@ -227,8 +227,7 @@
           tags: ["Product Design", "Frontend", "Job Search", "UX Flow", "MVP Thinking"],
           hero: "followjob",
           images: [
-            { src: "/projects/followjob/cover-designed.svg", label: "FollowJob cover" },
-            { src: "/projects/followjob/cover.png", label: "Mobile onboarding" },
+            { src: "/projects/followjob/cover.png", label: "FollowJob cover" },
             { src: "/projects/followjob/status.png", label: "Application status flow" },
             { src: "/projects/followjob/detail.png", label: "Application detail" },
             { src: "/projects/followjob/notes.png", label: "Follow-up notes" },
@@ -264,7 +263,7 @@
           tags: ["Airbus", "UX Research", "Figma", "Enterprise UX", "Contextual Interviews"],
           hero: "airbus",
           images: [
-            { src: "/projects/airbus/cover-designed.svg", label: "Airbus ACS cover" },
+            { src: "/projects/airbus/cover.png", label: "Airbus ACS cover" },
             { src: "/projects/airbus/dashboard.png", label: "Notification dashboard" },
             { src: "/projects/airbus/dashboard-2.png", label: "Dashboard state" },
             { src: "/projects/airbus/cr-detail.png", label: "Notification detail" },
@@ -300,8 +299,7 @@
           tags: ["Local-First", "Mobile UX", "Chinese Interface", "Utility Tool", "Cross-Device"],
           hero: "sixyao",
           images: [
-            { src: "/projects/sixyao/cover-designed.svg", label: "SixYao cover" },
-            { src: "/projects/sixyao/cover.png", label: "Product introduction" },
+            { src: "/projects/sixyao/cover.png", label: "SixYao cover" },
             { src: "/projects/sixyao/reading.png", label: "Coin toss recording" },
             { src: "/projects/sixyao/result.png", label: "Saved reading result" },
           ],
@@ -335,8 +333,7 @@
           tags: ["Chrome Extension", "AI Tools", "Quota Tracking", "Developer Experience", "UI Design"],
           hero: "ai-quota",
           images: [
-            { src: "/projects/ai-quota/cover-designed.svg", label: "QuotaClock cover" },
-            { src: "/projects/ai-quota/cover.png", label: "Quota dashboard" },
+            { src: "/projects/ai-quota/cover.png", label: "QuotaClock cover" },
             { src: "/projects/ai-quota/meter.png", label: "Usage meter" },
             { src: "/projects/ai-quota/provider.png", label: "Provider breakdown" },
           ],
@@ -370,7 +367,7 @@
           tags: ["Web3", "DApp", "Wallet Connection", "Social Product", "Frontend Experiment"],
           hero: "dapp",
           images: [
-            { src: "/projects/dapp-feed/cover-designed.svg", label: "DApp Social Feed cover" },
+            { src: "/projects/dapp-feed/cover.png", label: "DApp Social Feed cover" },
             { src: "/projects/dapp-feed/feed.png", label: "Social feed" },
             { src: "/projects/dapp-feed/profile.png", label: "Profile view" },
             { src: "/projects/dapp-feed/create.png", label: "Post creation" },
@@ -404,8 +401,7 @@
           tags: ["Mobile UX", "Pet Care", "Figma", "Product Concept", "Community"],
           hero: "furever",
           images: [
-            { src: "/projects/furever/cover-designed.svg", label: "FurEver cover" },
-            { src: "/projects/furever/cover.png", label: "Mobile landing screen" },
+            { src: "/projects/furever/cover.png", label: "FurEver cover" },
             { src: "/projects/furever/home.png", label: "Pet home dashboard" },
             { src: "/projects/furever/pet-id.png", label: "Pet identity record" },
             { src: "/projects/furever/safety.png", label: "Safety and location flow" },
@@ -474,8 +470,8 @@
           tags: ["Vue.js", "Spring Boot", "WebSocket", "Agile", "Online Game"],
           hero: "mindbug",
           images: [
-            { src: "/projects/mindbug/cover-designed.svg", label: "Mindbug cover" },
-            { src: "/projects/mindbug/cover.png", label: "Game interface" },
+            { src: "/projects/mindbug/cover.png", label: "Mindbug cover" },
+            { src: "/projects/mindbug/card-interaction.png", label: "Card interaction" },
             { src: "/projects/mindbug/game-room.png", label: "Game room state" },
           ],
           problem:
@@ -508,7 +504,7 @@
           tags: ["Travel Website", "Web Design", "Entrepreneurial Project", "Content Structure", "Wix"],
           hero: "real-china",
           images: [
-            { src: "/projects/real-china/cover-designed.svg", label: "Real China cover" },
+            { src: "/projects/real-china/cover.png", label: "Real China cover" },
             { src: "/projects/real-china/cover.jpg", label: "Travel homepage" },
           ],
           problem:
