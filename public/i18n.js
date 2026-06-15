@@ -139,7 +139,7 @@
         state: "开放 2026 年机会",
         seeking: "前端工程、软件工程、全栈开发与产品工程岗位",
         location: "法国巴黎",
-        relocation: "可接受 relocation",
+        relocation: "可接受异地工作 / 搬迁",
       },
       about: {
         title: "关于 Jinpeng",
@@ -171,7 +171,7 @@
     [
       {
         degree: "人机交互硕士",
-        school: "图卢兹第三大学 Paul Sabatier & ENAC",
+        school: "图卢兹第三大学和法国国立民航大学",
         note: "双学位项目，聚焦 HCI、UX 研究、以用户为中心的设计、原型、可用性评估与前端开发。",
       },
       {

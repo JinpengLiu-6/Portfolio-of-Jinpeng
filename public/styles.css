@@ -80,15 +80,15 @@
 }
 .jp-win-bar:active { cursor: grabbing; }
 .jp-lights { display: flex; gap: 8px; align-items: center; }
-.jp-light { width: 12px; height: 12px; padding: 0; flex: 0 0 12px; line-height: 0;
+.jp-light { width: 15px; height: 15px; padding: 0; flex: 0 0 15px; line-height: 0;
   border-radius: 50%; border: none; cursor: pointer; appearance: none; -webkit-appearance: none;
-  display: grid; place-items: center; color: rgba(0,0,0,0.5); transition: filter 0.15s; }
-.jp-light svg { display: block; width: 8px; height: 8px; margin: auto; opacity: 0; transition: opacity 0.12s; }
+  display: grid; place-items: center; color: rgba(0,0,0,0.56); transition: filter 0.15s, transform 0.15s; }
+.jp-light svg { display: block; width: 9px; height: 9px; margin: auto; opacity: 0; stroke-width: 2.8; transition: opacity 0.12s; }
 .jp-lights:hover .jp-light svg { opacity: 1; }
 .jp-light.r { background: #ff5f57; }
 .jp-light.y { background: #febc2e; }
 .jp-light.g { background: #28c840; }
-.jp-light:hover { filter: brightness(1.1); }
+.jp-light:hover { filter: brightness(1.1); transform: translateY(-1px); }
 .jp-win-title { display: flex; align-items: center; gap: 9px; font-size: 13px; font-weight: 600;
   color: var(--tx-0); font-family: var(--f-disp); letter-spacing: 0.1px; }
 .jp-win-title .jp-wt-ico { color: var(--ac-bright); display: flex; }
@@ -199,8 +199,8 @@
   .jp-win-bar { height: 38px; padding: 0 10px; gap: 9px; }
   .jp-win-title { min-width: 0; flex: 1; font-size: 12.5px; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
   .jp-win-sub { display: none; }
-  .jp-lights { gap: 7px; }
-  .jp-light { width: 11px; height: 11px; flex-basis: 11px; }
+  .jp-lights { gap: 8px; }
+  .jp-light { width: 14px; height: 14px; flex-basis: 14px; }
   .jp-win-body { -webkit-overflow-scrolling: touch; overscroll-behavior: contain; }
 
   .jp-dock-wrap { bottom: 8px; padding: 0 8px; }

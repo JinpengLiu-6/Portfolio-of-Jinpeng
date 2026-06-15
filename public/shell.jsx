@@ -132,9 +132,9 @@ function OSWindow({ win, mod, focused, isMobile, onFocus, onClose, onMin, onMax,
       style={style} onMouseDown={() => onFocus(win.id)}>
       <div ref={barRef} className="jp-win-bar" onPointerDown={startDrag} onDoubleClick={() => !isMobile && onMax(win.id)}>
         <div className="jp-lights" data-no-drag>
-          <button className="jp-light r" onClick={() => onClose(win.id)} title={t("ui.win.close", "Close")}><Icon name="close" size={8} /></button>
-          <button className="jp-light y" onClick={() => onMin(win.id)} title={t("ui.win.minimize", "Minimize")}><Icon name="min" size={8} /></button>
-          <button className="jp-light g" onClick={() => onMax(win.id)} title={t("ui.win.zoom", "Zoom")}><Icon name="max" size={8} /></button>
+          <button className="jp-light r" onClick={() => onClose(win.id)} title={t("ui.win.close", "Close")}><Icon name="close" size={9} /></button>
+          <button className="jp-light y" onClick={() => onMin(win.id)} title={t("ui.win.minimize", "Minimize")}><Icon name="min" size={9} /></button>
+          <button className="jp-light g" onClick={() => onMax(win.id)} title={t("ui.win.zoom", "Zoom")}><Icon name="max" size={9} /></button>
         </div>
         <div className="jp-win-title">
           <span className="jp-wt-ico"><Icon name={mod.icon} size={15} /></span>
