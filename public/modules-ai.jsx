@@ -6,7 +6,7 @@ const { useState: uSA, useEffect: uEA, useRef: uRA } = React;
 /* ---- Build grounded context about Jinpeng ---- */
 function buildContext() {
   const { profile, experience, projects, skills } = window.JP;
-  const exp = experience.map((e) => `- ${e.company} — ${e.title} (${e.kind}). ${e.summary} Stack: ${e.stack.join(", ")}.`).join("\n");
+  const exp = experience.map((e) => `- ${e.company} - ${e.title} (${e.period}, ${e.location}; ${e.kind}). ${e.summary} Stack: ${e.stack.join(", ")}.`).join("\n");
   const prj = projects.map((p) => `- ${p.name} (${p.kind}, ${p.year}): ${p.oneliner} Tech: ${p.tags.join(", ")}. Problem: ${p.problem} Solution: ${p.solution}`).join("\n");
   const sk = skills.map((s) => s.name).join(", ");
   return `You are the Recruiter Assistant inside "Jinpeng OS", the interactive portfolio of Jinpeng Liu.
@@ -16,10 +16,11 @@ PROFILE
 Name: ${profile.name}
 Role focus: ${profile.role}
 Tagline: ${profile.tagline}
-Status: ${profile.status.state}, available from 20 November 2026. Seeking ${profile.status.seeking}. Based in ${profile.status.location}. ${profile.status.relocation}.
+Core identity: ${profile.identity}
+Status: ${profile.status.state}, available from 12 September 2026. Seeking ${profile.status.seeking}. Based in ${profile.status.location}. ${profile.status.relocation}.
 Education: ${profile.education.map((e) => e.degree + " (" + e.school + ")").join("; ")}.
-Languages: Chinese (native), English (professional), French (professional).
-Contact: ${profile.contact.email}, GitHub ${profile.contact.github}, LinkedIn ${profile.contact.linkedin}.
+Languages: ${profile.languages.map((l) => `${l.name} / ${l.nativeName} (${l.level})`).join("; ")}.
+Contact: ${profile.contact.email}, ${profile.contact.phone}, GitHub ${profile.contact.github}, LinkedIn ${profile.contact.linkedin}.
 
 EXPERIENCE
 ${exp}
@@ -31,11 +32,11 @@ SKILLS: ${sk}`;
 }
 
 const SUGGESTED = [
-  "Is Jinpeng a good fit for a frontend role?",
-  "What's his most impressive project?",
+  "Is Jinpeng a good fit for a front-end role?",
+  "What makes him product-oriented?",
   "Does he have full-stack experience?",
   "When is he available, and where?",
-  "How does HCI make him a better engineer?",
+  "How does UX/HCI make him a better engineer?",
 ];
 
 function AssistantModule() {
@@ -67,7 +68,7 @@ function AssistantModule() {
       }
       setMsgs((m) => [...m, { role: "assistant", text: (text || "").trim() || "I'm not sure about that one — best to ask Jinpeng directly at jp.liu87@gmail.com." }]);
     } catch (e) {
-      setMsgs((m) => [...m, { role: "assistant", text: "I can't reach the live model right now, but here's what I can tell you: Jinpeng is an HCI-trained software engineer fluent across React/TypeScript frontends and Java/Python backends, available from 20 Nov 2026. Reach him at jp.liu87@gmail.com." }]);
+      setMsgs((m) => [...m, { role: "assistant", text: "I can't reach the live model right now, but here's what I can tell you: Jinpeng is an HCI-trained software engineer fluent across React/TypeScript frontends and Java/Python backends, available from 12 Sep 2026. Reach him at jp.liu87@gmail.com." }]);
     } finally {
       setBusy(false);
     }
@@ -121,9 +122,9 @@ function AssistantModule() {
 
 /* ---------------- DEVELOPER CONSOLE ---------------- */
 function ConsoleModule({ openModule }) {
-  const { profile, experience, projects, skills, modules } = window.JP;
+  const { profile, experience, projects, skills, modules, terminal } = window.JP;
   const [lines, setLines] = uSA([
-    { t: "sys", c: "Jinpeng OS — Developer Console  v1.0.0" },
+    { t: "sys", c: "Jinpeng OS - Command Center  v1.0.0" },
     { t: "sys", c: "Type 'help' for a list of commands." },
   ]);
   const [val, setVal] = uSA("");
@@ -151,27 +152,46 @@ function ConsoleModule({ openModule }) {
         { t: "kv", k: "experience", v: "career history" },
         { t: "kv", k: "projects", v: "shipped products" },
         { t: "kv", k: "skills", v: "technical skills" },
+        { t: "kv", k: "cat mission.txt", v: "product mission" },
+        { t: "kv", k: "ls strengths/", v: "core strengths" },
+        { t: "kv", k: "open current-focus.md", v: "current focus" },
+        { t: "kv", k: "cat why-me.txt", v: "why Jinpeng" },
         { t: "kv", k: "contact", v: "how to reach him" },
         { t: "kv", k: "status", v: "availability" },
         { t: "kv", k: "clear", v: "clear the console" }]); break;
-      case "whoami": out([{ t: "out", c: `${profile.name} — ${profile.role}` }, { t: "dim", c: profile.tagline }]); break;
-      case "ls": out(modules.map((m) => ({ t: "kv", k: m.id, v: m.desc }))); break;
-      case "open": {
-        const t = modules.find((m) => m.id === a.toLowerCase() || m.short.toLowerCase() === a.toLowerCase());
-        if (t) { out([{ t: "ok", c: `launching ${t.name}…` }]); openModule(t.id); }
-        else out([{ t: "err", c: `no module '${a}'. try: ${modules.map((m) => m.id).join(", ")}` }]);
-        break; }
+      case "whoami": out([{ t: "out", c: `${profile.name} - ${profile.role}` }, { t: "dim", c: profile.tagline }]); break;
       case "experience": case "exp": out(experience.map((e) => ({ t: "kv", k: e.company, v: e.title }))); break;
       case "projects": case "proj": out(projects.map((p) => ({ t: "kv", k: p.name, v: p.oneliner }))); break;
-      case "skills": out([{ t: "out", c: skills.map((s) => s.name).join("  ·  ") }]); break;
+      case "skills": out([{ t: "out", c: skills.map((s) => s.name).join("  /  ") }]); break;
+      case "cat": {
+        if (a === "mission.txt") out([{ t: "out", c: terminal.mission }]);
+        else if (a === "why-me.txt") out([{ t: "out", c: terminal.why }]);
+        else out([{ t: "err", c: `file not found: ${a}` }]);
+        break;
+      }
+      case "ls": {
+        if (a === "strengths/" || a === "strengths") out(terminal.strengths.map((s) => ({ t: "out", c: s })));
+        else out(modules.map((m) => ({ t: "kv", k: m.id, v: m.desc })));
+        break;
+      }
+      case "open": {
+        if (a === "current-focus.md") {
+          out([{ t: "out", c: "Current focus:" }, ...terminal.focus.map((f) => ({ t: "out", c: `* ${f}` }))]);
+          break;
+        }
+        const t = modules.find((m) => m.id === a.toLowerCase() || m.short.toLowerCase() === a.toLowerCase());
+        if (t) { out([{ t: "ok", c: `launching ${t.name}...` }]); openModule(t.id); }
+        else out([{ t: "err", c: `no module '${a}'. try: ${modules.map((m) => m.id).join(", ")}` }]);
+        break; }
       case "contact": out([{ t: "kv", k: "email", v: profile.contact.email },
+        { t: "kv", k: "phone", v: profile.contact.phone },
         { t: "kv", k: "github", v: profile.contact.github },
         { t: "kv", k: "linkedin", v: profile.contact.linkedin }]); break;
-      case "status": out([{ t: "ok", c: `${profile.status.state} from 20 Nov 2026 · ${profile.status.location} · ${profile.status.relocation}` }]); break;
+      case "status": out([{ t: "ok", c: `${profile.status.state} from 12 Sep 2026 - ${profile.status.location} - ${profile.status.relocation}` }]); break;
       case "clear": setLines([]); break;
-      case "sudo": out([{ t: "dim", c: "nice try 😄 — Jinpeng has root, you have read access." }]); break;
+      case "sudo": out([{ t: "dim", c: "nice try - Jinpeng has root, you have read access." }]); break;
       case "echo": out([{ t: "out", c: a }]); break;
-      case "hello": case "hi": out([{ t: "ok", c: "hey there, recruiter 👋 — type 'whoami' or 'open projects'." }]); break;
+      case "hello": case "hi": out([{ t: "ok", c: "hey there, recruiter - type 'whoami' or 'open projects'." }]); break;
       default: out([{ t: "err", c: `command not found: ${c}. type 'help'.` }]);
     }
   }

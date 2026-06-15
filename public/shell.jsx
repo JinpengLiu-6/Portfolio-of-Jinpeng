@@ -5,10 +5,15 @@ const { useState: uSh, useEffect: uEh, useRef: uRh, useCallback: uCh } = React;
 
 const WIN_DEFAULTS = {
   mission:    { w: 880, h: 620 },
+  about:      { w: 780, h: 600 },
+  resume:     { w: 760, h: 600 },
   experience: { w: 900, h: 600 },
   projects:   { w: 940, h: 660 },
   skills:     { w: 900, h: 680 },
+  languages:  { w: 600, h: 580 },
+  education:  { w: 760, h: 560 },
   assistant:  { w: 560, h: 620 },
+  contact:    { w: 680, h: 540 },
   console:    { w: 720, h: 480 },
 };
 
@@ -16,6 +21,8 @@ const WIN_DEFAULTS = {
 function Boot({ onDone }) {
   const steps = [
     "Initializing kernel",
+    "Loading About Me",
+    "Mounting Resume Preview",
     "Mounting Experience Database",
     "Loading Project Laboratory",
     "Calibrating Skill Universe",
@@ -113,7 +120,7 @@ function OSWindow({ win, mod, focused, isMobile, onFocus, onClose, onMin, onMax,
   }
 
   const style = isMobile
-    ? { left: 0, top: 34, width: "100vw", height: "calc(100dvh - 34px)", zIndex: win.z, borderRadius: 0 }
+    ? { left: 8, top: 42, width: "calc(100vw - 16px)", height: "calc(100dvh - 172px)", zIndex: win.z, borderRadius: 18 }
     : win.maximized
       ? { left: 10, top: 42, width: "calc(100vw - 20px)", height: "calc(100dvh - 130px)", zIndex: win.z }
       : { left: geo.x, top: geo.y, width: geo.w, height: geo.h, zIndex: win.z };

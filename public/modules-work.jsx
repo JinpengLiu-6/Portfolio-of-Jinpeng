@@ -3,13 +3,19 @@
    ============================================================ */
 const { useState: uSW } = React;
 
-function ProjectHero({ id, accent, big }) {
-  // distinct abstract placeholder per project
+function ProjectHero({ project, accent, big }) {
+  const hero = project.images && project.images[0];
   return (
     <div className={"pl-hero-art" + (big ? " big" : "")} style={{ "--p-ac": accent }}>
-      <div className="pl-hero-grid" />
-      <div className="pl-hero-orb" />
-      <div className="pl-hero-rings"><span /><span /><span /></div>
+      {hero ? (
+        <img className="pl-hero-img" src={hero.src} alt={hero.label || project.name} />
+      ) : (
+        <>
+          <div className="pl-hero-grid" />
+          <div className="pl-hero-orb" />
+          <div className="pl-hero-rings"><span /><span /><span /></div>
+        </>
+      )}
     </div>
   );
 }
@@ -25,13 +31,13 @@ function ProjectLab() {
     <div className="jp-mod pl">
       <div className="jp-mod-head">
         <div className="jp-eyebrow"><Icon name="lab" size={13} /> PROJECT LABORATORY</div>
-        <h1 className="jp-h1">Products, not cards.</h1>
-        <p className="jp-sub">Four shipped explorations across browser extensions, web3, native mobile and real-time systems. Open any one for the full case study.</p>
+        <h1 className="jp-h1">Product & Engineering Projects</h1>
+        <p className="jp-sub">A collection of product ideas, enterprise UX work, frontend experiments and archive projects. Open any one for the full case study.</p>
       </div>
       <div className="pl-gallery">
         {projects.map((p) => (
           <button key={p.id} className="pl-item" onClick={() => setOpenId(p.id)} style={{ "--p-ac": p.accent }}>
-            <ProjectHero id={p.hero} accent={p.accent} />
+            <ProjectHero project={p} accent={p.accent} />
             <div className="pl-item-body">
               <div className="pl-item-top">
                 <span className="pl-item-kind mono">{p.kind}</span>
@@ -70,7 +76,7 @@ function CaseStudy({ proj, onBack }) {
       </div>
 
       <div className="cs-hero">
-        <ProjectHero id={proj.hero} accent={proj.accent} big />
+        <ProjectHero project={proj} accent={proj.accent} big />
         <div className="cs-hero-meta">
           <span className="pl-item-kind mono">{proj.kind} · {proj.year}</span>
           <h1 className="cs-title disp">{proj.name}</h1>
@@ -118,11 +124,18 @@ function CaseStudy({ proj, onBack }) {
         <section className="cs-sec">
           <div className="cs-sec-h"><span className="cs-sec-n mono">05</span> Screens</div>
           <div className="cs-screens">
-            {proj.screens.map((s) => (
-              <Placeholder key={s} label={s} tone={proj.accent} ratio="4/3" />
+            {(proj.images && proj.images.length ? proj.images.slice(1) : proj.screens.map((s) => ({ label: s }))).map((s) => (
+              s.src ? (
+                <figure key={s.src} className="cs-screen">
+                  <img src={s.src} alt={s.label} />
+                  <figcaption>{s.label}</figcaption>
+                </figure>
+              ) : (
+                <Placeholder key={s.label} label={s.label} tone={proj.accent} ratio="4/3" />
+              )
             ))}
           </div>
-          <p className="cs-screens-note mono">drop product shots here — labeled slots ready to swap</p>
+          <p className="cs-screens-note mono">selected product screens from the project</p>
         </section>
 
         <section className="cs-sec">

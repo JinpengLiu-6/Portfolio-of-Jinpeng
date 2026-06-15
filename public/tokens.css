@@ -1,10 +1,10 @@
 /* ============================================================
    Jinpeng OS — Design Tokens
-   Dark, technical, premium. Violet signature accent.
+   Dark, technical, premium. Emerald terminal accent.
    ============================================================ */
 
 :root {
-  /* --- Canvas / surfaces (deep near-black, faint violet tint) --- */
+  /* --- Canvas / surfaces (deep near-black, faint terminal tint) --- */
   --bg-0: #07070b;          /* deepest, wallpaper base */
   --bg-1: #0a0a11;          /* desktop */
   --bg-2: #101019;          /* window body */
@@ -27,14 +27,14 @@
   --tx-2: #7c7c8c;          /* tertiary */
   --tx-3: #54545f;          /* faint / disabled */
 
-  /* --- Accent: violet --- */
-  --ac: #6e62f7;
-  --ac-bright: #8b80ff;
-  --ac-dim: #5b50d6;
-  --ac-deep: #38329a;
-  --ac-glow: rgba(110, 98, 247, 0.45);
-  --ac-wash: rgba(110, 98, 247, 0.12);
-  --ac-line: rgba(110, 98, 247, 0.32);
+  /* --- Accent: emerald / terminal --- */
+  --ac: #16b87f;
+  --ac-bright: #3ee0a0;
+  --ac-dim: #109968;
+  --ac-deep: #0c5e44;
+  --ac-glow: rgba(22, 184, 127, 0.45);
+  --ac-wash: rgba(22, 184, 127, 0.12);
+  --ac-line: rgba(22, 184, 127, 0.32);
 
   /* Supporting signal colors (low saturation, matched L/C) */
   --ok: #3ecf8e;

@@ -6,7 +6,7 @@
 .jp-desktop {
   position: fixed; inset: 0;
   background:
-    radial-gradient(120% 90% at 78% -10%, rgba(110,98,247,0.16), transparent 55%),
+    radial-gradient(120% 90% at 78% -10%, rgba(22,184,127,0.16), transparent 55%),
     radial-gradient(100% 80% at 8% 110%, rgba(84,168,255,0.08), transparent 55%),
     linear-gradient(180deg, var(--bg-1), var(--bg-0));
   overflow: hidden;
@@ -41,7 +41,7 @@
 .jp-mb-logo { display: flex; align-items: center; gap: 8px; font-weight: 700; color: var(--tx-0);
   font-family: var(--f-disp); letter-spacing: 0.2px; padding: 0 10px 0 4px; }
 .jp-mb-mark { width: 16px; height: 16px; border-radius: 5px;
-  background: linear-gradient(135deg, var(--ac-bright), var(--ac-deep));
+  background: #050606 url("/jinpeng-logo.png") center / cover no-repeat;
   box-shadow: 0 0 0 1px rgba(255,255,255,0.14) inset, 0 2px 8px var(--ac-glow); }
 .jp-mb-item { padding: 4px 10px; border-radius: 7px; cursor: pointer; transition: background 0.15s, color 0.15s; }
 .jp-mb-item:hover { background: rgba(255,255,255,0.06); color: var(--tx-0); }
@@ -80,9 +80,10 @@
 }
 .jp-win-bar:active { cursor: grabbing; }
 .jp-lights { display: flex; gap: 8px; align-items: center; }
-.jp-light { width: 12px; height: 12px; border-radius: 50%; border: none; cursor: pointer;
+.jp-light { width: 12px; height: 12px; padding: 0; flex: 0 0 12px; line-height: 0;
+  border-radius: 50%; border: none; cursor: pointer; appearance: none; -webkit-appearance: none;
   display: grid; place-items: center; color: rgba(0,0,0,0.5); transition: filter 0.15s; }
-.jp-light svg { opacity: 0; transition: opacity 0.12s; }
+.jp-light svg { display: block; width: 8px; height: 8px; margin: auto; opacity: 0; transition: opacity 0.12s; }
 .jp-lights:hover .jp-light svg { opacity: 1; }
 .jp-light.r { background: #ff5f57; }
 .jp-light.y { background: #febc2e; }
@@ -188,7 +189,25 @@
 
 /* mobile launcher */
 .jp-mobile { display: none; }
-@media (max-width: 720px) {
-  .jp-dock { gap: 3px; padding: 7px 8px; }
-  .jp-dock-item { width: 42px; height: 42px; }
+@media (max-width: 900px) {
+  .jp-menubar { padding: 0 8px; }
+  .jp-mb-logo { padding-right: 4px; }
+  .jp-mb-right { gap: 0; }
+  .jp-mb-kbd { display: none; }
+  .jp-mb-stat { padding: 4px 6px; }
+  .jp-win { border-radius: 18px !important; }
+  .jp-win-bar { height: 38px; padding: 0 10px; gap: 9px; }
+  .jp-win-title { min-width: 0; flex: 1; font-size: 12.5px; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
+  .jp-win-sub { display: none; }
+  .jp-lights { gap: 7px; }
+  .jp-light { width: 11px; height: 11px; flex-basis: 11px; }
+  .jp-win-body { -webkit-overflow-scrolling: touch; overscroll-behavior: contain; }
+
+  .jp-dock-wrap { bottom: 8px; padding: 0 8px; }
+  .jp-dock { max-width: calc(100vw - 16px); display: flex; flex-wrap: wrap; justify-content: center; align-items: center;
+    gap: 6px; padding: 8px; overflow: visible; border-radius: 18px; }
+  .jp-dock-item { width: 42px; height: 42px; flex: 0 0 42px; border-radius: 12px; }
+  .jp-dock-item:hover { transform: none; }
+  .jp-dock-tip { display: none; }
+  .jp-dock-sep { flex: 0 0 1px; height: 32px; margin: 0 2px; }
 }

@@ -2,6 +2,7 @@
    Jinpeng OS — Root application
    ============================================================ */
 const { useState: uSA2, useEffect: uEA2, useRef: uRA2, useCallback: uCA2 } = React;
+const MOBILE_BREAKPOINT = 900;
 
 function App() {
   const { modules, profile } = window.JP;
@@ -11,13 +12,13 @@ function App() {
   const [wins, setWins] = uSA2([]);
   const [focusId, setFocusId] = uSA2(null);
   const [palette, setPalette] = uSA2(false);
-  const [isMobile, setIsMobile] = uSA2(window.innerWidth <= 720);
+  const [isMobile, setIsMobile] = uSA2(window.innerWidth <= MOBILE_BREAKPOINT);
   const zRef = uRA2(20);
   const offRef = uRA2(0);
   const now = useClock();
 
   uEA2(() => {
-    const r = () => setIsMobile(window.innerWidth <= 720);
+    const r = () => setIsMobile(window.innerWidth <= MOBILE_BREAKPOINT);
     window.addEventListener("resize", r);
     return () => window.removeEventListener("resize", r);
   }, []);
@@ -49,12 +50,14 @@ function App() {
     setWins((w) => {
       const ex = w.find((x) => x.id === id);
       zRef.current += 1;
+      if (isMobile && ex) return [{ ...ex, z: zRef.current, minimized: false, closing: false }];
       if (ex) return w.map((x) => x.id === id ? { ...x, z: zRef.current, minimized: false } : x);
       const d = WIN_DEFAULTS[id] || { w: 800, h: 600 };
       const off = (offRef.current % 5) * 28; offRef.current += 1;
       const x = Math.max(20, (window.innerWidth - d.w) / 2 + off - 40);
       const y = Math.max(54, (window.innerHeight - d.h) / 2 + off - 30);
-      return [...w, { id, z: zRef.current, geo: { x, y, w: d.w, h: d.h }, minimized: false, maximized: false }];
+      const next = { id, z: zRef.current, geo: { x, y, w: d.w, h: d.h }, minimized: false, maximized: false };
+      return isMobile ? [next] : [...w, next];
     });
     setFocusId(id);
   }
@@ -119,7 +122,7 @@ function App() {
         <div className="jp-dock">
           {modules.map((m, i) => (
             <React.Fragment key={m.id}>
-              {i === 5 && <div className="jp-dock-sep" />}
+              {m.id === "console" && <div className="jp-dock-sep" />}
               <button className={"jp-dock-item" + (wins.some((w) => w.id === m.id) ? " open" : "")}
                 onClick={() => openModule(m.id)} style={{ "--d-ac": m.accent }}>
                 <Icon name={m.icon} size={22} />
