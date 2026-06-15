@@ -136,6 +136,8 @@ function AssistantModule() {
     setInput("");
     setMsgs((m) => [...m, { role: "user", text: question }]);
     setBusy(true);
+    const startedAt = Date.now();
+    const minimumThink = new Promise((resolve) => window.setTimeout(resolve, 650));
     try {
       const prompt = `${ctx.current}\n\nRecruiter question: ${question}\n\nAnswer:`;
       let text = "";
@@ -144,8 +146,10 @@ function AssistantModule() {
       } else {
         text = localAssistantAnswer(question);
       }
+      if (Date.now() - startedAt < 650) await minimumThink;
       setMsgs((m) => [...m, { role: "assistant", text: (text || "").trim() || localAssistantAnswer(question) }]);
     } catch (e) {
+      if (Date.now() - startedAt < 650) await minimumThink;
       setMsgs((m) => [...m, { role: "assistant", text: localAssistantAnswer(question) }]);
     } finally {
       setBusy(false);
@@ -227,10 +231,8 @@ function ConsoleModule({ openModule }) {
   const [val, setVal] = uSA("");
   const [hist, setHist] = uSA([]);
   const [hi, setHi] = uSA(-1);
-  const [termBusy, setTermBusy] = uSA(false);
   const endRef = uRA(null);
   const inRef = uRA(null);
-  const jobRef = uRA(0);
 
   uEA(() => { if (endRef.current) endRef.current.scrollTop = endRef.current.scrollHeight; }, [lines]);
 
@@ -300,25 +302,19 @@ function ConsoleModule({ openModule }) {
 
   function run(raw) {
     const cmd = raw.trim();
-    if (!cmd || termBusy) return false;
+    if (!cmd) return false;
     const [c, ...args] = cmd.split(/\s+/);
     const a = args.join(" ");
-    const thinkingId = ++jobRef.current;
     const result = commandResult(c, a);
     setHist((h) => [cmd, ...h]);
     setHi(-1);
-    setTermBusy(true);
-    setLines((l) => [...l, { t: "in", c: cmd }, { t: "thinking", id: thinkingId }]);
-    window.setTimeout(() => {
-      if (result.clear) {
-        setLines([]);
-      } else {
-        setLines((l) => [...l.filter((line) => line.id !== thinkingId), ...(result.lines || [])]);
-      }
-      if (result.action) result.action();
-      setTermBusy(false);
-      window.setTimeout(() => inRef.current && inRef.current.focus(), 0);
-    }, 420 + Math.random() * 220);
+    if (result.clear) {
+      setLines([]);
+    } else {
+      setLines((l) => [...l, { t: "in", c: cmd }, ...(result.lines || [])]);
+    }
+    if (result.action) window.setTimeout(result.action, 0);
+    window.setTimeout(() => inRef.current && inRef.current.focus(), 0);
     return true;
   }
 
@@ -338,13 +334,12 @@ function ConsoleModule({ openModule }) {
           if (l.t === "ok") return <div key={i} className="term-out ok">{l.c}</div>;
           if (l.t === "dim") return <div key={i} className="term-out dim">{l.c}</div>;
           if (l.t === "sys") return <div key={i} className="term-out sys">{l.c}</div>;
-          if (l.t === "thinking") return <div key={l.id} className="term-out thinking"><span /><span /><span /></div>;
           return <div key={i} className="term-out">{l.c}</div>;
         })}
         <div className="term-line live">
           <span className="term-prompt">jinpeng@os</span><span className="term-tilde">~</span><span className="term-arrow">❯</span>
           <input ref={inRef} className="term-input" value={val} autoFocus spellCheck="false"
-            readOnly={termBusy} onChange={(e) => setVal(e.target.value)} onKeyDown={onKey} />
+            onChange={(e) => setVal(e.target.value)} onKeyDown={onKey} />
           <span className="term-caret" />
         </div>
       </div>
