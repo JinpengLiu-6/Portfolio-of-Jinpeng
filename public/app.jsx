@@ -68,7 +68,7 @@ function MobileOS({ modules, profile, win, now, openModule, closeWin, openPalett
         <span className="jp-ios-status-mark" />
       </div>
       <div className="jp-ios-home-scroll">
-        <button className="jp-ios-hero" onClick={() => openModule("mission")}>
+        <button className="jp-ios-hero" onClick={() => openModule("about")}>
           <img className="jp-ios-avatar" src={profile.avatar} alt="" />
           <div className="jp-ios-hero-copy">
             <div className="jp-ios-kicker mono">Jinpeng OS</div>

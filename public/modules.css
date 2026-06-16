@@ -242,6 +242,7 @@
 /* ---------------- SKILL STACK ---------------- */
 .ss { display: flex; flex-direction: column; height: 100%; overflow: hidden; }
 .ss-head { padding: 22px 30px 14px; flex: none; }
+.ss-mobile-stack { display: none; }
 .ss-shell { flex: 1; min-height: 0; display: grid; grid-template-columns: minmax(280px, 340px) minmax(0, 1fr);
   gap: 0; border-top: 1px solid var(--line); overflow: hidden; }
 .ss-master, .ss-detail { min-width: 0; overflow-x: hidden; overflow-y: auto; }
@@ -409,7 +410,7 @@
   .exp-q-dim { display: none; }
   .exp-q-count { margin-left: 0; }
   .exp-body { grid-template-columns: 1fr; height: auto; }
-  .exp-rail { border-right: none; border-bottom: 1px solid var(--line); max-height: 180px; padding: 8px; }
+  .exp-rail { border-right: none; border-bottom: 1px solid var(--line); max-height: none; overflow: visible; padding: 8px; }
   .exp-row { padding: 11px 10px; }
   .exp-detail { padding: 18px 16px 22px; }
   .exp-d-co { font-size: 23px; }
@@ -426,8 +427,27 @@
   .cs-one, .cs-text { font-size: 14px; }
   .cs-arch-node { min-width: 100%; }
 
-  .ss-shell { grid-template-columns: 1fr; overflow: auto; }
-  .ss-master { border-right: none; border-bottom: 1px solid var(--line); max-height: 220px; padding: 14px 16px; }
+  .ss { display: block; height: auto; min-height: 100%; overflow: visible; }
+  .ss-mobile-stack { display: flex; flex-direction: column; gap: 10px; padding: 0 16px 22px; }
+  .ss-mobile-group { min-width: 0; border-radius: 18px; overflow: hidden;
+    background: rgba(255,255,255,0.024); border: 1px solid color-mix(in oklab, var(--cat) 18%, var(--line)); }
+  .ss-mobile-group-head { width: 100%; display: flex; align-items: center; gap: 8px; min-height: 54px; padding: 0 14px;
+    color: var(--tx-1); font-family: var(--f-mono); font-size: 10.5px; letter-spacing: 0.12em; border: 0; background: transparent; cursor: pointer; }
+  .ss-mobile-group-head > span:nth-child(2) { flex: 1; text-align: left; }
+  .ss-mobile-group-head svg { color: var(--tx-2); transform: rotate(0deg); transition: transform 0.18s; }
+  .ss-mobile-group.open .ss-mobile-group-head svg { transform: rotate(90deg); color: var(--cat); }
+  .ss-mobile-cards { display: flex; flex-direction: column; gap: 8px; padding: 0 10px 10px; animation: jp-fade-up 0.2s var(--ease-out) both; }
+  .ss-mobile-card { min-width: 0; padding: 13px; border-radius: 14px;
+    background: linear-gradient(145deg, color-mix(in oklab, var(--cat) 8%, rgba(255,255,255,0.035)), rgba(255,255,255,0.02));
+    border: 1px solid color-mix(in oklab, var(--cat) 24%, var(--line));
+    box-shadow: 0 16px 34px -28px color-mix(in oklab, var(--cat) 60%, transparent); }
+  .ss-mobile-name { margin: 0 0 5px; font-size: 18px; font-weight: 700; letter-spacing: 0; }
+  .ss-mobile-card p { margin: 0 0 10px; color: var(--tx-1); font-size: 13px; line-height: 1.45; }
+  .ss-mobile-meta { padding-top: 8px; border-top: 1px solid var(--line); }
+  .ss-mobile-meta + .ss-mobile-meta { margin-top: 8px; }
+  .ss-mobile-meta-k { margin-bottom: 6px; color: var(--tx-3); font-size: 9.5px; letter-spacing: 0.12em; }
+  .ss-shell { display: none; grid-template-columns: 1fr; overflow: visible; }
+  .ss-master { border-right: none; border-bottom: 1px solid var(--line); max-height: none; overflow: visible; padding: 14px 16px; }
   .ss-group + .ss-group { margin-top: 16px; }
   .ss-detail { overflow: visible; padding: 18px 16px 22px; }
   .ss-name { font-size: 28px; }

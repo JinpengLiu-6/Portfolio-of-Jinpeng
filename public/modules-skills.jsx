@@ -7,6 +7,7 @@ function SkillStack() {
   const { skills, skillCats, projects, experience } = window.JP;
   const t = window.JP_I18N ? window.JP_I18N.t : (key, fallback) => fallback || key;
   const [sel, setSel] = uSS(skills[0]?.id);
+  const [mobileOpen, setMobileOpen] = uSS("frontend");
   const cur = skills.find((s) => s.id === sel) || skills[0];
   const curCat = skillCats[cur.cat];
 
@@ -38,6 +39,38 @@ function SkillStack() {
         <div className="jp-eyebrow"><Icon name="skills" size={13} /> {t("skills.eyebrow", "SKILL STACK")}</div>
         <h1 className="jp-h1">{t("skills.title", "The stack.")}</h1>
         <p className="jp-sub">{t("skills.subtitle", "A cleaner scan of the tools, product skills, and AI workflows Jinpeng uses to turn ideas into working products.")}</p>
+      </div>
+
+      <div className="ss-mobile-stack">
+        {groups.map((group) => (
+          <section key={group.id} className={"ss-mobile-group" + (mobileOpen === group.id ? " open" : "")} style={{ "--cat": group.color }}>
+            <button className="ss-mobile-group-head" onClick={() => setMobileOpen((id) => id === group.id ? "" : group.id)}>
+              <span className="ss-dot" />
+              <span>{group.name.toUpperCase()}</span>
+              <span className="ss-count mono">{group.skills.length}</span>
+              <Icon name="arrow" size={14} />
+            </button>
+            {mobileOpen === group.id && (
+              <div className="ss-mobile-cards">
+                {group.skills.map((skill) => {
+                  const mobileProjectNames = skill.projects.map((pid) => projects.find((p) => p.id === pid)?.name || pid);
+                  const mobileExpNames = skill.exp.map((eid) => experience.find((e) => e.id === eid)?.company || eid);
+                  return (
+                    <article key={skill.id} className="ss-mobile-card">
+                      <div className="ss-mobile-card-main">
+                        <h2 className="ss-mobile-name disp">{skill.name}</h2>
+                        <p>{skill.blurb}</p>
+                      </div>
+                      <MobileMeta label={t("skills.used", "USED IN")} values={mobileProjectNames.length ? mobileProjectNames : [t("skills.cross.short", "Cross-cutting work")]} tone="accent" />
+                      <MobileMeta label={t("skills.proven", "PROVEN AT")} values={mobileExpNames.length ? mobileExpNames : [t("skills.self.short", "Personal practice")]} tone="solid" />
+                      <MobileMeta label={t("skills.pairs", "PAIRS WITH")} values={skill.tech.length ? skill.tech : [t("skills.judgment", "Product judgment")]} tone="ghost" />
+                    </article>
+                  );
+                })}
+              </div>
+            )}
+          </section>
+        ))}
       </div>
 
       <div className="ss-shell">
@@ -87,6 +120,17 @@ function SkillStack() {
             <DetailRow label={t("skills.pairs", "PAIRS WITH")} values={cur.tech.length ? cur.tech : [t("skills.judgment", "Product judgment")]} tone="ghost" />
           </DetailWrapper>
         </section>
+      </div>
+    </div>
+  );
+}
+
+function MobileMeta({ label, values, tone }) {
+  return (
+    <div className="ss-mobile-meta">
+      <div className="ss-mobile-meta-k mono">{label}</div>
+      <div className="ss-pills">
+        {values.slice(0, 4).map((v) => <span key={v} className={"ss-pill " + tone}>{v}</span>)}
       </div>
     </div>
   );

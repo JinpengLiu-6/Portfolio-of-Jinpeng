@@ -1,7 +1,7 @@
 /* ============================================================
    Module: Project Laboratory + Case Study
    ============================================================ */
-const { useState: uSW } = React;
+const { useState: uSW, useEffect: uEW, useRef: uRW } = React;
 
 function ProjectHero({ project, accent, big }) {
   const hero = project.images && project.images[0];
@@ -60,8 +60,18 @@ function ProjectLab() {
 
 function CaseStudy({ proj, onBack }) {
   const t = window.JP_I18N ? window.JP_I18N.t : (key, fallback) => fallback || key;
+  const rootRef = uRW(null);
+
+  uEW(() => {
+    const frame = requestAnimationFrame(() => {
+      const scroller = rootRef.current && rootRef.current.closest(".jp-ios-app-body, .jp-win-body");
+      if (scroller) scroller.scrollTo({ top: 0, left: 0, behavior: "auto" });
+    });
+    return () => cancelAnimationFrame(frame);
+  }, [proj.id]);
+
   return (
-    <div className="jp-mod cs" style={{ "--p-ac": proj.accent }}>
+    <div ref={rootRef} className="jp-mod cs" style={{ "--p-ac": proj.accent }}>
       <div className="cs-bar">
         <button className="cs-back" onClick={onBack}><Icon name="arrowL" size={16} /> {t("case.back", "Laboratory")}</button>
         <div className="cs-bar-tags">
