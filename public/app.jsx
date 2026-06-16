@@ -4,6 +4,89 @@
 const { useState: uSA2, useEffect: uEA2, useRef: uRA2, useCallback: uCA2 } = React;
 const MOBILE_BREAKPOINT = 900;
 
+function MobileOS({ modules, profile, win, now, openModule, closeWin, openPalette }) {
+  const Content = win ? window.JP_MODULES[win.id] : null;
+  const mod = win ? modules.find((m) => m.id === win.id) : null;
+  const time = now.toLocaleTimeString("en-GB", { hour: "2-digit", minute: "2-digit" });
+  const date = now.toLocaleDateString("en-GB", { weekday: "short", day: "numeric", month: "short" });
+  const dockIds = ["mission", "projects", "assistant", "contact"];
+  const dockModules = dockIds.map((id) => modules.find((m) => m.id === id)).filter(Boolean);
+  const appModules = modules.filter((m) => !dockIds.includes(m.id));
+  const t = (key, fallback) => window.JP_I18N ? window.JP_I18N.t(key, fallback) : (fallback || key);
+
+  if (win && mod) {
+    return (
+      <div className="jp-ios-app">
+        <div className="jp-ios-status">
+          <span>{time}</span>
+          <span className="jp-ios-status-mark" />
+        </div>
+        <div className="jp-ios-nav">
+          <button className="jp-ios-back" onClick={() => closeWin(win.id)} aria-label={t("ui.mobile.home", "Home")}>
+            <Icon name="arrowL" size={18} />
+            <span>{t("ui.mobile.home", "Home")}</span>
+          </button>
+          <div className="jp-ios-title">
+            <span className="jp-ios-title-icon" style={{ "--m-ac": mod.accent }}><Icon name={mod.icon} size={15} /></span>
+            <span>{mod.name}</span>
+          </div>
+          <button className="jp-ios-tool" onClick={openPalette} aria-label={t("ui.mobile.search", "Search")}>
+            <Icon name="search" size={17} />
+          </button>
+        </div>
+        <div className="jp-ios-app-body">
+          {Content ? <Content openModule={openModule} /> : <div style={{ padding: 24 }}>Module not found.</div>}
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="jp-ios-home">
+      <div className="jp-ios-status">
+        <span>{time}</span>
+        <span className="jp-ios-status-mark" />
+      </div>
+      <div className="jp-ios-home-scroll">
+        <div className="jp-ios-hero">
+          <img className="jp-ios-avatar" src={profile.avatar} alt="" />
+          <div className="jp-ios-hero-copy">
+            <div className="jp-ios-kicker mono">Jinpeng OS</div>
+            <div className="jp-ios-name disp">{profile.name}</div>
+            <div className="jp-ios-role">{profile.role}</div>
+          </div>
+          <div className="jp-ios-date mono">{date}</div>
+        </div>
+
+        <div className="jp-ios-widget" onClick={() => openModule("mission")}>
+          <div>
+            <div className="jp-ios-widget-k mono">{t("ui.mobile.status", "STATUS")}</div>
+            <div className="jp-ios-widget-v">{profile.status.state}</div>
+          </div>
+          <Icon name="arrow" size={18} />
+        </div>
+
+        <div className="jp-ios-grid">
+          {appModules.map((m) => (
+            <button key={m.id} className="jp-ios-icon-btn" onClick={() => openModule(m.id)}>
+              <span className="jp-ios-icon" style={{ "--m-ac": m.accent }}><Icon name={m.icon} size={24} /></span>
+              <span>{m.name}</span>
+            </button>
+          ))}
+        </div>
+      </div>
+
+      <div className="jp-ios-dock">
+        {dockModules.map((m) => (
+          <button key={m.id} className="jp-ios-dock-btn" onClick={() => openModule(m.id)} aria-label={m.name}>
+            <span className="jp-ios-icon" style={{ "--m-ac": m.accent }}><Icon name={m.icon} size={24} /></span>
+          </button>
+        ))}
+      </div>
+    </div>
+  );
+}
+
 function App() {
   const { modules, profile } = window.JP;
   const { Boot, OSWindow, Palette, WIN_DEFAULTS } = window.JP_SHELL;
@@ -25,9 +108,9 @@ function App() {
 
   // open Mission Control on first boot
   uEA2(() => {
-    if (booted && wins.length === 0) openModule("mission");
+    if (booted && wins.length === 0 && !isMobile) openModule("mission");
     // eslint-disable-next-line
-  }, [booted]);
+  }, [booted, isMobile]);
 
   // global keyboard
   uEA2(() => {
@@ -73,6 +156,7 @@ function App() {
   function finishBoot() { sessionStorage.setItem("jp-booted", "1"); setBooted(true); }
 
   const openIds = wins.filter((w) => !w.minimized).map((w) => w.id);
+  const activeMobileWin = isMobile ? wins.find((w) => !w.minimized) : null;
   const time = now.toLocaleTimeString("en-GB", { hour: "2-digit", minute: "2-digit" });
   const date = now.toLocaleDateString("en-GB", { weekday: "short", day: "numeric", month: "short" });
   const t = (key, fallback) => window.JP_I18N ? window.JP_I18N.t(key, fallback) : (fallback || key);
@@ -84,56 +168,63 @@ function App() {
       <div className="jp-wall-orb" style={{ width: 420, height: 420, top: -120, right: -60, background: "var(--ac)" }} />
       <div className="jp-wall-orb" style={{ width: 360, height: 360, bottom: -140, left: -80, background: "var(--info)", animationDelay: "-7s" }} />
 
-      {/* Menu bar */}
-      <div className="jp-menubar">
-        <div className="jp-mb-logo"><span className="jp-mb-mark" /> Jinpeng OS</div>
-        {!isMobile && modules.slice(0, 3).map((m) => (
-          <div key={m.id} className="jp-mb-item" onClick={() => openModule(m.id)}>{m.short}</div>
-        ))}
-        <div className="jp-mb-spacer" />
-        <div className="jp-mb-right">
-          <div className="jp-mb-kbd" onClick={() => setPalette(true)}><Icon name="cmd" size={12} /> K</div>
-          {!isMobile && <div className="jp-mb-stat"><span className="jp-mb-live" /> {profile.status.state}</div>}
-          {!isMobile && <div className="jp-mb-stat">{date}</div>}
-          <div className="jp-mb-stat mono">{time}</div>
-        </div>
-      </div>
+      {isMobile ? (
+        <MobileOS modules={modules} profile={profile} win={activeMobileWin} now={now}
+          openModule={openModule} closeWin={closeWin} openPalette={() => setPalette(true)} />
+      ) : (
+        <>
+          {/* Menu bar */}
+          <div className="jp-menubar">
+            <div className="jp-mb-logo"><span className="jp-mb-mark" /> Jinpeng OS</div>
+            {modules.slice(0, 3).map((m) => (
+              <div key={m.id} className="jp-mb-item" onClick={() => openModule(m.id)}>{m.short}</div>
+            ))}
+            <div className="jp-mb-spacer" />
+            <div className="jp-mb-right">
+              <div className="jp-mb-kbd" onClick={() => setPalette(true)}><Icon name="cmd" size={12} /> K</div>
+              <div className="jp-mb-stat"><span className="jp-mb-live" /> {profile.status.state}</div>
+              <div className="jp-mb-stat">{date}</div>
+              <div className="jp-mb-stat mono">{time}</div>
+            </div>
+          </div>
 
-      {/* Windows */}
-      {wins.filter((w) => !w.minimized).map((w) => {
-        const mod = modules.find((m) => m.id === w.id);
-        return (
-          <OSWindow key={w.id} win={w} mod={mod} focused={focusId === w.id && !isMobile}
-            isMobile={isMobile} onFocus={focus} onClose={closeWin} onMin={minWin} onMax={maxWin}
-            onGeo={setGeo} openModule={openModule} />
-        );
-      })}
+          {/* Windows */}
+          {wins.filter((w) => !w.minimized).map((w) => {
+            const mod = modules.find((m) => m.id === w.id);
+            return (
+              <OSWindow key={w.id} win={w} mod={mod} focused={focusId === w.id}
+                isMobile={false} onFocus={focus} onClose={closeWin} onMin={minWin} onMax={maxWin}
+                onGeo={setGeo} openModule={openModule} />
+            );
+          })}
 
-      {/* empty-state hint */}
-      {openIds.length === 0 && (
-        <div className="jp-empty">
-          <div className="jp-empty-mark"><span className="jp-mb-mark" style={{ width: 40, height: 40, borderRadius: 12 }} /></div>
-          <div className="jp-empty-h disp">{t("ui.empty.title", "Welcome to Jinpeng OS")}</div>
-          <div className="jp-empty-s">{t("ui.empty.subtitle", "Open a module from the dock - or press")} <kbd>⌘K</kbd></div>
-        </div>
+          {/* empty-state hint */}
+          {openIds.length === 0 && (
+            <div className="jp-empty">
+              <div className="jp-empty-mark"><span className="jp-mb-mark" style={{ width: 40, height: 40, borderRadius: 12 }} /></div>
+              <div className="jp-empty-h disp">{t("ui.empty.title", "Welcome to Jinpeng OS")}</div>
+              <div className="jp-empty-s">{t("ui.empty.subtitle", "Open a module from the dock - or press")} <kbd>⌘K</kbd></div>
+            </div>
+          )}
+
+          {/* Dock */}
+          <div className="jp-dock-wrap">
+            <div className="jp-dock">
+              {modules.map((m) => (
+                <React.Fragment key={m.id}>
+                  {m.id === "console" && <div className="jp-dock-sep" />}
+                  <button className={"jp-dock-item" + (wins.some((w) => w.id === m.id) ? " open" : "")}
+                    onClick={() => openModule(m.id)} style={{ "--d-ac": m.accent }}>
+                    <Icon name={m.icon} size={22} />
+                    <span className="jp-dock-tip">{m.name}</span>
+                    <span className="jp-dock-dot" />
+                  </button>
+                </React.Fragment>
+              ))}
+            </div>
+          </div>
+        </>
       )}
-
-      {/* Dock */}
-      <div className="jp-dock-wrap">
-        <div className="jp-dock">
-          {modules.map((m, i) => (
-            <React.Fragment key={m.id}>
-              {m.id === "console" && <div className="jp-dock-sep" />}
-              <button className={"jp-dock-item" + (wins.some((w) => w.id === m.id) ? " open" : "")}
-                onClick={() => openModule(m.id)} style={{ "--d-ac": m.accent }}>
-                <Icon name={m.icon} size={22} />
-                <span className="jp-dock-tip">{m.name}</span>
-                <span className="jp-dock-dot" />
-              </button>
-            </React.Fragment>
-          ))}
-        </div>
-      </div>
 
       {/* Command palette */}
       {palette && <Palette onClose={() => setPalette(false)} openModule={openModule} openWins={openIds} />}

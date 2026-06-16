@@ -187,9 +187,136 @@
   border-bottom: 1px solid transparent; transition: border-color 0.2s; }
 .jp-link:hover { border-color: var(--ac-line); }
 
-/* mobile launcher */
-.jp-mobile { display: none; }
+/* ---------------- iOS mobile shell ---------------- */
+.jp-ios-home, .jp-ios-app {
+  position: fixed; inset: 0; z-index: 100;
+  color: var(--tx-0); overflow: hidden;
+  background:
+    radial-gradient(120% 70% at 82% -8%, rgba(22,184,127,0.28), transparent 58%),
+    radial-gradient(90% 70% at 8% 100%, rgba(84,168,255,0.14), transparent 60%),
+    linear-gradient(180deg, #07130f 0%, #080a0f 52%, #06070b 100%);
+}
+.jp-ios-status {
+  height: calc(42px + env(safe-area-inset-top)); padding: env(safe-area-inset-top) 22px 0;
+  display: flex; align-items: center; justify-content: space-between;
+  font-family: var(--f-mono); font-size: 12px; color: var(--tx-0);
+  position: relative; z-index: 3;
+}
+.jp-ios-status-mark {
+  width: 18px; height: 18px; border-radius: 6px;
+  background: #050606 url("/jinpeng-logo.png") center / cover no-repeat;
+  box-shadow: 0 0 0 1px rgba(255,255,255,0.14) inset, 0 3px 14px var(--ac-glow);
+}
+.jp-ios-home-scroll {
+  height: calc(100dvh - 42px - env(safe-area-inset-top));
+  overflow: auto; -webkit-overflow-scrolling: touch;
+  padding: 8px 18px calc(112px + env(safe-area-inset-bottom));
+}
+.jp-ios-hero {
+  position: relative; display: grid; grid-template-columns: 70px minmax(0, 1fr); gap: 14px;
+  align-items: center; min-height: 126px; padding: 18px;
+  border-radius: 30px; overflow: hidden;
+  background: rgba(255,255,255,0.075);
+  border: 1px solid rgba(255,255,255,0.14);
+  box-shadow: 0 20px 55px -28px rgba(0,0,0,0.85), 0 1px 0 rgba(255,255,255,0.12) inset;
+  backdrop-filter: blur(26px) saturate(150%);
+  -webkit-backdrop-filter: blur(26px) saturate(150%);
+}
+.jp-ios-hero::after {
+  content: ""; position: absolute; width: 180px; height: 180px; border-radius: 50%;
+  right: -70px; top: -88px; background: var(--ac-wash); pointer-events: none;
+}
+.jp-ios-avatar {
+  width: 70px; height: 70px; border-radius: 22px; object-fit: cover; position: relative; z-index: 1;
+  box-shadow: 0 18px 32px -22px var(--ac-glow), 0 0 0 1px rgba(255,255,255,0.18);
+}
+.jp-ios-hero-copy { min-width: 0; position: relative; z-index: 1; }
+.jp-ios-kicker { font-size: 10px; letter-spacing: 0.18em; color: var(--ac-bright); text-transform: uppercase; }
+.jp-ios-name { margin-top: 5px; font-size: 27px; font-weight: 700; letter-spacing: 0; }
+.jp-ios-role { margin-top: 4px; font-size: 13px; line-height: 1.35; color: var(--tx-1); }
+.jp-ios-date {
+  position: absolute; right: 16px; bottom: 13px; z-index: 1;
+  font-size: 10.5px; color: var(--tx-2);
+}
+.jp-ios-widget {
+  margin-top: 14px; display: flex; align-items: center; justify-content: space-between; gap: 16px;
+  min-height: 74px; padding: 16px 18px; border: 0; color: var(--tx-0);
+  border-radius: 24px; cursor: pointer;
+  background: linear-gradient(135deg, var(--ac-wash), rgba(255,255,255,0.05));
+  border: 1px solid var(--ac-line);
+  box-shadow: 0 16px 38px -28px var(--ac-glow);
+}
+.jp-ios-widget-k { font-size: 10px; letter-spacing: 0.16em; color: var(--ac-bright); }
+.jp-ios-widget-v { margin-top: 5px; font-size: 16px; font-weight: 700; color: var(--tx-0); }
+.jp-ios-grid {
+  display: grid; grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 18px 12px; padding: 24px 2px 8px;
+}
+.jp-ios-icon-btn {
+  min-width: 0; border: 0; background: transparent; color: var(--tx-0); cursor: pointer;
+  display: flex; flex-direction: column; align-items: center; gap: 8px; padding: 0;
+  font-family: var(--f-sans);
+}
+.jp-ios-icon-btn > span:last-child {
+  width: 100%; font-size: 11.5px; line-height: 1.18; text-align: center;
+  color: rgba(245,247,255,0.88); overflow-wrap: anywhere;
+}
+.jp-ios-icon {
+  width: 58px; height: 58px; border-radius: 16px; display: grid; place-items: center;
+  color: #fff; background:
+    linear-gradient(145deg, color-mix(in srgb, var(--m-ac, var(--ac)) 74%, white 10%), color-mix(in srgb, var(--m-ac, var(--ac)) 55%, black 24%));
+  box-shadow: 0 14px 32px -18px var(--m-ac, var(--ac)), 0 1px 0 rgba(255,255,255,0.22) inset;
+}
+.jp-ios-icon-btn:active .jp-ios-icon, .jp-ios-dock-btn:active .jp-ios-icon { transform: scale(0.94); }
+.jp-ios-dock {
+  position: fixed; left: 18px; right: 18px; bottom: calc(14px + env(safe-area-inset-bottom)); z-index: 4;
+  display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; padding: 12px;
+  border-radius: 28px; background: rgba(255,255,255,0.12);
+  border: 1px solid rgba(255,255,255,0.16);
+  backdrop-filter: blur(28px) saturate(160%); -webkit-backdrop-filter: blur(28px) saturate(160%);
+  box-shadow: 0 18px 50px -18px rgba(0,0,0,0.85), 0 1px 0 rgba(255,255,255,0.16) inset;
+}
+.jp-ios-dock-btn { border: 0; background: transparent; padding: 0; display: grid; place-items: center; cursor: pointer; }
+.jp-ios-app { display: flex; flex-direction: column; animation: jp-ios-app-in 0.28s var(--ease-out) both; }
+@keyframes jp-ios-app-in {
+  from { opacity: 0; transform: translateY(18px) scale(0.985); }
+  to { opacity: 1; transform: none; }
+}
+.jp-ios-nav {
+  height: 52px; flex: none; display: grid; grid-template-columns: minmax(76px, 1fr) auto minmax(44px, 1fr);
+  align-items: center; gap: 8px; padding: 0 14px;
+  border-bottom: 1px solid rgba(255,255,255,0.1);
+  background: rgba(8,10,15,0.58);
+  backdrop-filter: blur(24px) saturate(160%); -webkit-backdrop-filter: blur(24px) saturate(160%);
+  position: relative; z-index: 2;
+}
+.jp-ios-back, .jp-ios-tool {
+  min-width: 0; height: 38px; border: 0; border-radius: 14px;
+  display: inline-flex; align-items: center; gap: 5px; background: transparent;
+  color: var(--ac-bright); cursor: pointer; font: 600 14px var(--f-sans);
+}
+.jp-ios-back { justify-self: start; padding: 0 6px 0 0; }
+.jp-ios-tool {
+  justify-self: end; width: 38px; justify-content: center;
+  border: 1px solid rgba(255,255,255,0.1); background: rgba(255,255,255,0.04);
+}
+.jp-ios-title {
+  min-width: 0; display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+  font: 700 14px var(--f-disp); color: var(--tx-0); white-space: nowrap;
+}
+.jp-ios-title-icon {
+  width: 26px; height: 26px; border-radius: 8px; display: grid; place-items: center;
+  color: #fff; background: var(--m-ac, var(--ac)); box-shadow: 0 8px 22px -14px var(--m-ac, var(--ac));
+}
+.jp-ios-app-body {
+  flex: 1; min-height: 0; overflow: auto; -webkit-overflow-scrolling: touch;
+  overscroll-behavior: contain; background: rgba(6,7,11,0.28);
+}
+.jp-ios-app-body .jp-mod { min-height: auto; }
+
 @media (max-width: 900px) {
+  .jp-desktop { overflow: hidden; }
+  .jp-wall-grid, .jp-wall-noise, .jp-wall-orb { display: none; }
   .jp-menubar { padding: 0 8px; }
   .jp-mb-logo { padding-right: 4px; }
   .jp-mb-right { gap: 0; }
