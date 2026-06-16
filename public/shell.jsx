@@ -151,7 +151,7 @@ function OSWindow({ win, mod, focused, isMobile, onFocus, onClose, onMin, onMax,
 }
 
 /* ---------------- COMMAND PALETTE ---------------- */
-function Palette({ onClose, openModule, openWins }) {
+function Palette({ onClose, openModule, openWins, excludeModuleIds = [] }) {
   const { modules, profile } = window.JP;
   const t = window.JP_I18N ? window.JP_I18N.t : (key, fallback) => fallback || key;
   const [q, setQ] = uSh("");
@@ -160,7 +160,7 @@ function Palette({ onClose, openModule, openWins }) {
   uEh(() => { inRef.current && inRef.current.focus(); }, []);
 
   const actions = [
-    ...modules.map((m) => ({ type: "mod", id: m.id, name: m.name, desc: m.desc, icon: m.icon })),
+    ...modules.filter((m) => !excludeModuleIds.includes(m.id)).map((m) => ({ type: "mod", id: m.id, name: m.name, desc: m.desc, icon: m.icon })),
     { type: "link", id: "email", name: t("palette.copyEmail", "Copy email"), desc: profile.contact.email, icon: "mail", href: "mailto:" + profile.contact.email },
     { type: "link", id: "github", name: t("palette.github", "Open GitHub"), desc: "JinpengLiu-6", icon: "github", href: profile.contact.github },
     { type: "link", id: "linkedin", name: t("palette.linkedin", "Open LinkedIn"), desc: "in/jinpeng-liu", icon: "linkedin", href: profile.contact.linkedin },

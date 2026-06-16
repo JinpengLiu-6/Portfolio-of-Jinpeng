@@ -4,14 +4,34 @@
 const { useState: uSA2, useEffect: uEA2, useRef: uRA2, useCallback: uCA2 } = React;
 const MOBILE_BREAKPOINT = 900;
 
+const MOBILE_ICON_TONES = {
+  mission: ["#16b87f", "#0c5e44", "rgba(22,184,127,0.48)"],
+  about: ["#20c997", "#0f6f56", "rgba(32,201,151,0.42)"],
+  resume: ["#54a8ff", "#145f99", "rgba(84,168,255,0.34)"],
+  experience: ["#3ee0a0", "#116b54", "rgba(62,224,160,0.42)"],
+  projects: ["#16b87f", "#083d31", "rgba(22,184,127,0.5)"],
+  skills: ["#34d399", "#0f5f49", "rgba(52,211,153,0.4)"],
+  languages: ["#4cc9f0", "#176280", "rgba(76,201,240,0.34)"],
+  education: ["#8bd450", "#2f6b38", "rgba(139,212,80,0.34)"],
+  assistant: ["#3ee0a0", "#12665c", "rgba(62,224,160,0.44)"],
+  contact: ["#2dd4bf", "#0f766e", "rgba(45,212,191,0.38)"],
+  console: ["#111b17", "#050807", "rgba(22,184,127,0.45)", "#3ee0a0"],
+};
+
+function mobileIconStyle(id) {
+  const tone = MOBILE_ICON_TONES[id] || MOBILE_ICON_TONES.mission;
+  return { "--m-a": tone[0], "--m-b": tone[1], "--m-glow": tone[2], "--m-fg": tone[3] || "#fff" };
+}
+
 function MobileOS({ modules, profile, win, now, openModule, closeWin, openPalette }) {
   const Content = win ? window.JP_MODULES[win.id] : null;
   const mod = win ? modules.find((m) => m.id === win.id) : null;
   const time = now.toLocaleTimeString("en-GB", { hour: "2-digit", minute: "2-digit" });
   const date = now.toLocaleDateString("en-GB", { weekday: "short", day: "numeric", month: "short" });
   const dockIds = ["mission", "projects", "assistant", "contact"];
+  const mobileHiddenIds = ["console"];
   const dockModules = dockIds.map((id) => modules.find((m) => m.id === id)).filter(Boolean);
-  const appModules = modules.filter((m) => !dockIds.includes(m.id));
+  const appModules = modules.filter((m) => !dockIds.includes(m.id) && !mobileHiddenIds.includes(m.id));
   const t = (key, fallback) => window.JP_I18N ? window.JP_I18N.t(key, fallback) : (fallback || key);
 
   if (win && mod) {
@@ -27,7 +47,7 @@ function MobileOS({ modules, profile, win, now, openModule, closeWin, openPalett
             <span>{t("ui.mobile.home", "Home")}</span>
           </button>
           <div className="jp-ios-title">
-            <span className="jp-ios-title-icon" style={{ "--m-ac": mod.accent }}><Icon name={mod.icon} size={15} /></span>
+            <span className="jp-ios-title-icon" style={mobileIconStyle(mod.id)}><Icon name={mod.icon} size={15} /></span>
             <span>{mod.name}</span>
           </div>
           <button className="jp-ios-tool" onClick={openPalette} aria-label={t("ui.mobile.search", "Search")}>
@@ -48,7 +68,7 @@ function MobileOS({ modules, profile, win, now, openModule, closeWin, openPalett
         <span className="jp-ios-status-mark" />
       </div>
       <div className="jp-ios-home-scroll">
-        <div className="jp-ios-hero">
+        <button className="jp-ios-hero" onClick={() => openModule("mission")}>
           <img className="jp-ios-avatar" src={profile.avatar} alt="" />
           <div className="jp-ios-hero-copy">
             <div className="jp-ios-kicker mono">Jinpeng OS</div>
@@ -56,7 +76,7 @@ function MobileOS({ modules, profile, win, now, openModule, closeWin, openPalett
             <div className="jp-ios-role">{profile.role}</div>
           </div>
           <div className="jp-ios-date mono">{date}</div>
-        </div>
+        </button>
 
         <div className="jp-ios-widget" onClick={() => openModule("mission")}>
           <div>
@@ -69,7 +89,7 @@ function MobileOS({ modules, profile, win, now, openModule, closeWin, openPalett
         <div className="jp-ios-grid">
           {appModules.map((m) => (
             <button key={m.id} className="jp-ios-icon-btn" onClick={() => openModule(m.id)}>
-              <span className="jp-ios-icon" style={{ "--m-ac": m.accent }}><Icon name={m.icon} size={24} /></span>
+              <span className="jp-ios-icon" style={mobileIconStyle(m.id)}><Icon name={m.icon} size={24} /></span>
               <span>{m.name}</span>
             </button>
           ))}
@@ -79,7 +99,7 @@ function MobileOS({ modules, profile, win, now, openModule, closeWin, openPalett
       <div className="jp-ios-dock">
         {dockModules.map((m) => (
           <button key={m.id} className="jp-ios-dock-btn" onClick={() => openModule(m.id)} aria-label={m.name}>
-            <span className="jp-ios-icon" style={{ "--m-ac": m.accent }}><Icon name={m.icon} size={24} /></span>
+            <span className="jp-ios-icon" style={mobileIconStyle(m.id)}><Icon name={m.icon} size={24} /></span>
           </button>
         ))}
       </div>
@@ -156,7 +176,7 @@ function App() {
   function finishBoot() { sessionStorage.setItem("jp-booted", "1"); setBooted(true); }
 
   const openIds = wins.filter((w) => !w.minimized).map((w) => w.id);
-  const activeMobileWin = isMobile ? wins.find((w) => !w.minimized) : null;
+  const activeMobileWin = isMobile ? wins.find((w) => !w.minimized && w.id !== "console") : null;
   const time = now.toLocaleTimeString("en-GB", { hour: "2-digit", minute: "2-digit" });
   const date = now.toLocaleDateString("en-GB", { weekday: "short", day: "numeric", month: "short" });
   const t = (key, fallback) => window.JP_I18N ? window.JP_I18N.t(key, fallback) : (fallback || key);
@@ -227,7 +247,8 @@ function App() {
       )}
 
       {/* Command palette */}
-      {palette && <Palette onClose={() => setPalette(false)} openModule={openModule} openWins={openIds} />}
+      {palette && <Palette onClose={() => setPalette(false)} openModule={openModule} openWins={openIds}
+        excludeModuleIds={isMobile ? ["console"] : []} />}
 
       {/* Boot */}
       {!booted && <Boot onDone={finishBoot} />}
