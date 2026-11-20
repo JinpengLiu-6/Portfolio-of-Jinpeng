@@ -54,3 +54,18 @@ test('身份未确认齐全时房主不可跳过；计时到期依然等待',()=
 test('非法票型、队伍、目标编号、重复提交被拦截',()=>{const r=setup();assert.throws(()=>act(r,r.players[(r.leader+1)%5].id,{type:'team',team:[]},NOW));assert.throws(()=>act(r,r.players[r.leader].id,{type:'team',team:[r.host,r.host]},NOW));assert.equal(resolveAction(r,{target:'1'}).target,undefined);propose(r);assert.throws(()=>act(r,r.host,{type:'vote',yes:'false'},NOW));assert.throws(()=>act(r,r.host,{type:'vote',yes:1},NOW));vote(r);advance(r);assert.throws(()=>act(r,r.team[0],{type:'quest',success:'true'},NOW));act(r,r.team[0],{type:'quest',success:true},NOW);assert.throws(()=>act(r,r.team[0],{type:'quest',success:false},NOW));const outsider=r.players.find(p=>!r.team.includes(p.id));assert.throws(()=>act(r,outsider.id,{type:'quest',success:true},NOW));});
 test('三次失败和刺杀失误的胜负',()=>{for(const n of [5,6,7,8]){const r=setup(n);for(let i=0;i<3;i++){const bad=r.players.find(p=>view(r,p.id).evil);propose(r,[bad,...r.players.filter(p=>p!==bad).slice(0,SIZES[n][r.round]-1)]);vote(r);advance(r);for(const id of r.team)act(r,id,{type:'quest',success:id!==bad.id},NOW);advance(r);}assert.equal(r.winner,'evil');const g=setup(n);for(let i=0;i<3;i++)questSuccess(g);act(g,g.players.find(p=>p.role==='assassin').id,{type:'assassinate',target:g.players.find(p=>p.role==='loyal').id},NOW);assert.equal(g.winner,'good');}});
 test('设置校验、保存、房主授权、重置准备和空房间恢复',()=>{const r=create('123456','一');const second=join(r,'二');act(r,r.host,{type:'ready'});const prefs={pace:'timer',discussSeconds:120,actionSeconds:45,resultSeconds:10};assert.throws(()=>act(r,second,{type:'settings',settings:prefs}));assert.throws(()=>act(r,r.host,{type:'settings',settings:{...prefs,resultSeconds:0}}));act(r,r.host,{type:'settings',settings:prefs});assert.deepEqual(r.settings,prefs);assert.equal(r.players[0].ready,false);act(r,r.host,{type:'leave'});assert.equal(r.host,second);act(r,second,{type:'leave'});const fresh=join(r,'三');assert.equal(r.host,fresh);assert.throws(()=>act(r,fresh,{type:'chat',text:'removed'}));});
+
+test('房主可提前结束各阶段；不判胜负、不泄露未完成投票，且可以重开',()=>{
+  for(const phase of ['identity','team','vote','voteResult','quest','result','assassinate']){
+    const r=setup(8,'timer');r.phase=phase;r.votes={[r.host]:true};r.cards={[r.host]:false};
+    assert.throws(()=>act(r,r.players[1].id,{type:'end'},NOW),/只有房主/);
+    act(r,r.host,{type:'end'},NOW);
+    assert.equal(r.phase,'end');assert.equal(r.winner,null);assert.equal(r.deadline,null);
+    assert.deepEqual(r.votes,{});assert.deepEqual(r.cards,{});
+    for(const p of r.players){const v=view(r,p.id);assert.equal(v.phase,'end');assert.ok(v.players.every(x=>x.role));assert.ok(!('votes' in v)&&!('cards' in v));}
+    assert.equal(tick(r,NOW+999999),false);
+    assert.throws(()=>act(r,r.host,{type:'end'},NOW),/没有进行中的对局/);
+    act(r,r.host,{type:'reset'},NOW);assert.equal(r.phase,'lobby');assert.ok(r.players.every(p=>!p.ready&&!p.role));
+    assert.throws(()=>act(r,r.host,{type:'end'},NOW),/没有进行中的对局/);
+  }
+});

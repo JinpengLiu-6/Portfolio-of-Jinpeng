@@ -28,3 +28,16 @@ test('HTTP wrapper validates origins, credentials, payloads and never caches sec
     res=await fetch(base+'other');assert.equal(res.status,404);
   }finally{server.closeAllConnections();await new Promise(resolve=>server.close(resolve));}
 });
+test('ending a shared room invalidates pending actions and synchronizes all players',async()=>{
+  const store=new LocalStore(),service=new AvalonService(store),host=await service.create({name:'Host'},'end-test');
+  const peers=[];for(let i=0;i<4;i++)peers.push(await service.join({room:host.room,name:'P'+i},'end-test'));
+  const players=[host,...peers];
+  const action=async(p,a,t)=>(new AvalonService(store)).action({room:host.room,turn:t||(await service.state(host.room,p.token)).turn,...a},p.token);
+  for(const p of players)await action(p,{type:'ready'});
+  await action(host,{type:'start'});const old=(await service.state(host.room,host.token)).turn;
+  await assert.rejects(()=>action(peers[0],{type:'end'},old),/只有房主/);
+  await action(host,{type:'end'},old);
+  await assert.rejects(()=>action(peers[0],{type:'ack'},old),e=>e.status===409);
+  for(const p of players){const v=await (new AvalonService(store)).state(host.room,p.token);assert.equal(v.phase,'end');assert.equal(v.winner,null);}
+  await action(host,{type:'reset'});assert.equal((await service.state(host.room,peers[0].token)).phase,'lobby');
+});
