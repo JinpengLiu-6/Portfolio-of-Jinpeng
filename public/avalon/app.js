@@ -12,7 +12,20 @@ function store(){try{if(session)localStorage.setItem('avalon.web.v2.session',JSO
 function preferences(){try{return JSON.parse(localStorage.getItem('avalon.web.v2.settings'))||DEFAULT;}catch{return DEFAULT;}}
 function show(html){$('#modal-body').innerHTML=html;if(!modal.open)modal.showModal();}
 $('#modal-close').onclick=()=>modal.close();modal.addEventListener('click',e=>{if(e.target===modal)modal.close();});modal.addEventListener('close',()=>$('#modal-body').innerHTML='');
-async function api(path,body){const res=await fetch('/api/avalon/'+path,{method:body?'POST':'GET',headers:{...(body?{'Content-Type':'application/json'}:{}),...(session?{Authorization:'Bearer '+session.token}:{})},body:body?JSON.stringify(body):undefined,signal:AbortSignal.timeout(10000)});const data=await res.json();if(!res.ok){const error=Error(data.error||'请求失败');error.status=res.status;throw error;}return data;}
+async function api(path,body){
+  // Some mobile browsers support AbortController but not AbortSignal.timeout.
+  const controller=new AbortController();
+  const timer=setTimeout(()=>controller.abort(),10000);
+  try{
+    const res=await fetch('/api/avalon/'+path,{method:body?'POST':'GET',headers:{...(body?{'Content-Type':'application/json'}:{}),...(session?{Authorization:'Bearer '+session.token}:{})},body:body?JSON.stringify(body):undefined,signal:controller.signal});
+    const data=await res.json();
+    if(!res.ok){const error=Error(data.error||'请求失败');error.status=res.status;throw error;}
+    return data;
+  }catch(error){
+    if(controller.signal.aborted)throw Error('连接超时，请检查网络后重试。');
+    throw error;
+  }finally{clearTimeout(timer);}
+}
 function home(){atHome=true;const code=(new URLSearchParams(location.search).get('room')||'').replace(/\D/g,'').slice(0,6);app.innerHTML=`<section class="welcome"><span class="kicker">5–10 人 · 语音搭子专用</span><h1>朋友就位，<br>圆桌开局。</h1><p>语音里讨论，这里只做决定。</p></section><section class="panel entry">${session?'<button class="secondary wide" id="resume">回到刚才的房间</button>':''}<form id="entry-form"><label for="nickname">你的昵称</label><input id="nickname" maxlength="12" placeholder="让朋友一眼认出你" autocomplete="nickname" required><button id="create" type="button" class="wide">创建房间</button><div class="divider">或加入朋友</div><label for="room-code">房间码</label><div class="join-row"><input id="room-code" inputmode="numeric" maxlength="6" value="${esc(code)}" placeholder="6 位数字" aria-label="房间码"><button type="submit" class="secondary">加入</button></div></form></section><p id="service-status" class="footnote" role="status"></p><p class="footnote">先打开你们的语音软件 · 刷新可恢复座位</p>`;
 $('#resume')?.addEventListener('click',()=>{atHome=false;version=-1;refresh();});$('#create').onclick=()=>enter('create');$('#entry-form').onsubmit=e=>{e.preventDefault();enter('join');};checkService();}
 async function enter(type,confirmed=false){if(busy)return;const name=$('#nickname').value.trim(),room=$('#room-code').value.trim();if(!name)return $('#nickname').reportValidity();if(type==='join'&&!/^\d{6}$/.test(room))return notify('请输入 6 位房间码');if(session&&!confirmed){show('<h2>切换房间？</h2><p>新座位会替换本浏览器保存的旧座位。</p><button class="wide" id="new-room">确认切换</button>');$('#new-room').onclick=()=>{modal.close();enter(type,true);};return;}
