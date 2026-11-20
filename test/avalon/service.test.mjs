@@ -41,3 +41,29 @@ test('ending a shared room invalidates pending actions and synchronizes all play
   for(const p of players){const v=await (new AvalonService(store)).state(host.room,p.token);assert.equal(v.phase,'end');assert.equal(v.winner,null);}
   await action(host,{type:'reset'});assert.equal((await service.state(host.room,peers[0].token)).phase,'lobby');
 });
+test('host disbands at every stage despite stale turns; no one can revive or rejoin',async()=>{
+  for(const phase of ['lobby','identity','team','vote','voteResult','quest','result','assassinate','end']){
+    const store=new LocalStore(),service=new AvalonService(store),host=await service.create({name:'Host'},'disband');
+    const peer=await service.join({room:host.room,name:'Peer'},'disband');
+    const snap=await store.read(host.room),r=structuredClone(snap.room);r.phase=phase;r.settings.pace='timer';r.deadline=0;r.history=[{passed:true}];r.votes={[peer.token]:false};
+    await store.compareAndSet(host.room,snap.raw,r);
+    await assert.rejects(()=>service.action({room:host.room,type:'disband',turn:'stale'},peer.token),/只有房主/);
+    const before=await store.read(host.room);
+    await service.action({room:host.room,type:'disband',turn:'stale'},host.token);
+    for(const p of [host,peer])await assert.rejects(()=>service.state(host.room,p.token),e=>e.status===404);
+    await assert.rejects(()=>service.join({room:host.room,name:'Late'},'disband'),e=>e.status===404);
+    await assert.rejects(()=>service.action({room:host.room,type:'ready',turn:'stale'},peer.token),e=>e.status===404);
+    assert.equal(await store.compareAndSet(host.room,before.raw,before.room),false);
+    const closed=(await store.read(host.room)).room;assert.equal(closed.closed,true);assert.deepEqual(closed.players,[]);assert.deepEqual(closed.votes,{});
+  }
+});
+test('finished players can leave; seats stay stable until reset and host transfers',async()=>{
+  const store=new LocalStore(),service=new AvalonService(store),host=await service.create({name:'Host'},'leave-end');
+  const players=[host];for(let i=1;i<5;i++)players.push(await service.join({room:host.room,name:'P'+i},'leave-end'));
+  const act=async(p,type)=>service.action({room:host.room,turn:(await service.state(host.room,p.token)).turn,type},p.token);
+  for(const p of players)await act(p,'ready');await act(host,'start');await act(host,'end');await act(players[2],'leave');
+  await assert.rejects(()=>service.state(host.room,players[2].token),e=>e.status===401);
+  assert.equal((await service.state(host.room,players[4].token)).me,4);
+  await act(host,'leave');const s=await service.state(host.room,players[1].token);assert.equal(s.host,1);assert.equal(s.players[2].left,true);
+  await act(players[1],'reset');const lobby=await service.state(host.room,players[1].token);assert.equal(lobby.phase,'lobby');assert.equal(lobby.players.length,3);assert.equal(lobby.host,0);
+});
