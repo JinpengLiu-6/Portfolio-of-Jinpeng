@@ -6,11 +6,17 @@
   "scripts": {
     "dev": "vite --host 0.0.0.0",
     "build": "vite build",
-    "preview": "vite preview --host 0.0.0.0"
+    "preview": "vite preview --host 0.0.0.0",
+    "test": "node --test test/avalon/*.test.mjs",
+    "dev:avalon": "node scripts/avalon-dev.mjs"
   },
   "dependencies": {
     "@vitejs/plugin-react": "^5.0.0",
     "vite": "^7.0.0"
   },
-  "devDependencies": {}
+  "devDependencies": {},
+  "type": "module",
+  "engines": {
+    "node": "22.x"
+  }
 }

@@ -1,0 +1,23 @@
+name: Avalon checks
+on:
+  push:
+    branches: [main]
+  pull_request:
+permissions:
+  contents: read
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: Install test Redis
+        run: sudo apt-get update && sudo apt-get install -y redis-server redis-tools
+      - run: npm test
+        env:
+          REDIS_TEST_BIN: /usr/bin
+      - run: npm run build
