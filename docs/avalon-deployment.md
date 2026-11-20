@@ -21,6 +21,8 @@
 
 ## 发布
 
+2026-11-20 已通过 Vercel Storage 创建专用 `avalon-redis`，选择 Free 套餐（创建时显示每月 500,000 条命令），主区域 `iad1`，关联本项目 Production 和 Preview。集成自动注入受保护的 `KV_REST_API_URL` / `KV_REST_API_TOKEN`，无需在仓库保存凭据。免费额度和使用量可在 Vercel Storage / Upstash 控制台查看。
+
 该仓库已由用户关联 Vercel 的 `main` 分支。正常推送到 `main` 会触发生产部署，构建命令 `npm run build`，输出 `dist`，Node.js 22。`vercel.json` 仅添加游戏相关路径和安全响应头，没有覆盖简历首页路由。
 
 仓库原有 GitHub Pages workflow 保留为手动触发；该仓库未启用 Pages，自动发布会返回 404，所以不再随 main 推送自动运行。Pages 只能部署静态页面，不能运行本游戏接口；真正联机请使用 Vercel 自定义域名。
