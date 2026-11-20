@@ -23,7 +23,7 @@
 
 该仓库已由用户关联 Vercel 的 `main` 分支。正常推送到 `main` 会触发生产部署，构建命令 `npm run build`，输出 `dist`，Node.js 22。`vercel.json` 仅添加游戏相关路径和安全响应头，没有覆盖简历首页路由。
 
-仓库原有 GitHub Pages workflow 仍保留。Pages 只能部署静态页面，不能运行本游戏接口；真正联机请使用 Vercel 自定义域名。
+仓库原有 GitHub Pages workflow 保留为手动触发；该仓库未启用 Pages，自动发布会返回 404，所以不再随 main 推送自动运行。Pages 只能部署静态页面，不能运行本游戏接口；真正联机请使用 Vercel 自定义域名。
 
 ## 本地开发
 
