@@ -69,3 +69,17 @@ test('房主可提前结束各阶段；不判胜负、不泄露未完成投票�
     assert.throws(()=>act(r,r.host,{type:'end'},NOW),/没有进行中的对局/);
   }
 });
+
+test('7 人局第三任务 4 人、第四任务 3 人；两失败牌规则仍只在第四任务',()=>{
+  for(const [round,size,oldSize,success] of [[2,4,3,false],[3,3,4,true]]){
+    const r=setup(7);r.round=round;
+    assert.deepEqual(view(r,r.host).sizes,[2,3,4,3,4]);
+    assert.throws(()=>propose(r,r.players.slice(0,oldSize)),/队伍人数不正确/);
+    const bad=r.players.find(p=>view(r,p.id).evil);
+    const team=[bad,...r.players.filter(p=>!view(r,p.id).evil).slice(0,size-1)];
+    propose(r,team);vote(r);advance(r);
+    for(const p of team)act(r,p.id,{type:'quest',success:p!==bad},NOW);
+    assert.equal(r.phase,'result');assert.equal(r.results[0].team.length,size);
+    assert.equal(r.results[0].fails,1);assert.equal(r.results[0].success,success);
+  }
+});
