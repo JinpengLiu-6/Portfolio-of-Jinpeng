@@ -70,10 +70,10 @@ test('房主可提前结束各阶段；不判胜负、不泄露未完成投票�
   }
 });
 
-test('7 人局第三任务 4 人、第四任务 3 人；两失败牌规则仍只在第四任务',()=>{
-  for(const [round,size,oldSize,success] of [[2,4,3,false],[3,3,4,true]]){
+test('7 人局第三任务 3 人、第四任务 4 人；两失败牌规则只在第四任务',()=>{
+  for(const [round,size,oldSize,success] of [[2,3,4,false],[3,4,3,true]]){
     const r=setup(7);r.round=round;
-    assert.deepEqual(view(r,r.host).sizes,[2,3,4,3,4]);
+    assert.deepEqual(view(r,r.host).sizes,[2,3,3,4,4]);
     assert.throws(()=>propose(r,r.players.slice(0,oldSize)),/队伍人数不正确/);
     const bad=r.players.find(p=>view(r,p.id).evil);
     const team=[bad,...r.players.filter(p=>!view(r,p.id).evil).slice(0,size-1)];
@@ -82,4 +82,25 @@ test('7 人局第三任务 4 人、第四任务 3 人；两失败牌规则仍只
     assert.equal(r.phase,'result');assert.equal(r.results[0].team.length,size);
     assert.equal(r.results[0].fails,1);assert.equal(r.results[0].success,success);
   }
+});
+
+test('7 人进阶含奥伯伦：梅林可见、坏人互不相认，刺杀选项不泄露他',()=>{
+  assert.deepEqual(roles(7).sort(),['merlin','percival','loyal','loyal','assassin','morgana','oberon'].sort());
+  assert.equal(roles(7,'basic').includes('oberon'),false);
+  assert.equal(roles(8).includes('mordred'),true);assert.equal(roles(8).includes('oberon'),false);
+  assert.equal(roles(9).includes('mordred'),true);assert.equal(roles(9).includes('oberon'),false);
+  assert.equal(roles(10).includes('mordred'),true);assert.equal(roles(10).includes('oberon'),true);
+  const r=setup(7),byRole=role=>r.players.find(p=>p.role===role),seat=role=>r.players.indexOf(byRole(role));
+  const oberon=byRole('oberon'),assassin=byRole('assassin'),morgana=byRole('morgana');
+  assert.equal(view(r,oberon.id).evil,true);assert.deepEqual(view(r,oberon.id).intel,[]);
+  assert.deepEqual(view(r,assassin.id).intel.map(x=>x.seat),[seat('morgana')]);
+  assert.deepEqual(view(r,morgana.id).intel.map(x=>x.seat),[seat('assassin')]);
+  assert.deepEqual(view(r,byRole('merlin').id).intel.map(x=>x.seat).sort((a,b)=>a-b),[seat('assassin'),seat('morgana'),seat('oberon')].sort((a,b)=>a-b));
+  const candidates=view(r,byRole('percival').id).intel;
+  assert.deepEqual(candidates.map(x=>x.seat).sort((a,b)=>a-b),[seat('merlin'),seat('morgana')].sort((a,b)=>a-b));
+  assert.ok(candidates.every(x=>x.label==='梅林候选人'));
+  for(let i=0;i<3;i++)questSuccess(r);
+  assert.ok(view(r,assassin.id).assassinTargets.includes(seat('oberon')));
+  assert.throws(()=>act(r,assassin.id,{type:'assassinate',target:morgana.id},NOW),/邪恶同伴/);
+  act(r,assassin.id,{type:'assassinate',target:oberon.id},NOW);assert.equal(r.winner,'good');
 });
