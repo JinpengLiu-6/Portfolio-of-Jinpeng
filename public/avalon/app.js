@@ -11,7 +11,7 @@ function notify(text){$('#toast').textContent=text;$('#toast').classList.add('sh
 function store(){try{if(session)localStorage.setItem('avalon.web.v2.session',JSON.stringify(session));else localStorage.removeItem('avalon.web.v2.session');}catch{notify('无法保存座位，请勿关闭页面');}}
 function preferences(){try{return JSON.parse(localStorage.getItem('avalon.web.v2.settings'))||DEFAULT;}catch{return DEFAULT;}}
 function show(html,kind='info'){modal.className=kind;$('#modal-body').innerHTML=html;if(!modal.open)modal.showModal();}
-$('#modal-close').onclick=()=>modal.close();modal.addEventListener('click',e=>{if(e.target===modal)modal.close();});modal.addEventListener('close',()=>$('#modal-body').innerHTML='');
+$('#modal-close').onclick=()=>modal.close();modal.addEventListener('click',e=>{if(e.target===modal)modal.close();});modal.addEventListener('close',()=>{if(!modal.open)$('#modal-body').innerHTML='';});
 async function api(path,body){
   // Some mobile browsers support AbortController but not AbortSignal.timeout.
   const controller=new AbortController();
