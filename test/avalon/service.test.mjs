@@ -67,3 +67,8 @@ test('finished players can leave; seats stay stable until reset and host transfe
   await act(host,'leave');const s=await service.state(host.room,players[1].token);assert.equal(s.host,1);assert.equal(s.players[2].left,true);
   await act(players[1],'reset');const lobby=await service.state(host.room,players[1].token);assert.equal(lobby.phase,'lobby');assert.equal(lobby.players.length,3);assert.equal(lobby.host,0);
 });
+
+test('concurrent assassination across independent services consumes exactly one chance',async()=>{
+  const {concurrentAssassination}=await import('./assassination-shared.mjs');
+  await concurrentAssassination(new LocalStore());
+});

@@ -104,3 +104,47 @@ test('7 人进阶含奥伯伦：梅林可见、坏人互不相认，刺杀选项
   assert.throws(()=>act(r,assassin.id,{type:'assassinate',target:morgana.id},NOW),/邪恶同伴/);
   act(r,assassin.id,{type:'assassinate',target:oberon.id},NOW);assert.equal(r.winner,'good');
 });
+
+test('刺客各回合各阶段均可刺杀：命中立即胜，错误目标不消耗机会',()=>{
+  for(let round=0;round<5;round++)for(const phase of ['identity','team','vote','voteResult','quest','result','assassinate']){
+    const r=setup(7);r.round=round;r.phase=phase;
+    const assassin=r.players.find(p=>p.role==='assassin'),merlin=r.players.find(p=>p.role==='merlin'),morgana=r.players.find(p=>p.role==='morgana');
+    assert.equal(view(r,assassin.id).canAssassinate,true);
+    for(const p of r.players.filter(p=>p!==assassin)){assert.equal(view(r,p.id).canAssassinate,false);assert.deepEqual(view(r,p.id).assassinTargets,[]);}
+    assert.throws(()=>act(r,merlin.id,{type:'assassinate',target:assassin.id},NOW),/只有刺客/);
+    for(const target of [assassin.id,morgana.id,'missing'])assert.throws(()=>act(r,assassin.id,{type:'assassinate',target},NOW));
+    assert.equal(r.assassinationUsed,false);
+    r.votes={[merlin.id]:true};r.cards={[assassin.id]:false};
+    act(r,assassin.id,{type:'assassinate',target:merlin.id},NOW);
+    assert.equal(r.winner,'evil');assert.equal(r.phase,'end');assert.equal(r.assassinationUsed,true);
+    assert.deepEqual(r.votes,{});assert.deepEqual(r.cards,{});
+    assert.throws(()=>act(r,assassin.id,{type:'assassinate',target:merlin.id},NOW),/机会已用尽/);
+  }
+});
+test('提前刺杀未中：保留当前回合、提交和时限，禁止再次刺杀',()=>{
+  for(const phase of ['identity','team','vote','voteResult','quest','result']){
+    const r=setup(7,'timer'),assassin=r.players.find(p=>p.role==='assassin'),loyal=r.players.find(p=>p.role==='loyal');
+    r.phase=phase;r.votes={[loyal.id]:true};r.cards={[assassin.id]:false};
+    const before=structuredClone(r),oldTurn=turn(r);
+    act(r,assassin.id,{type:'assassinate',target:loyal.id},NOW);
+    for(const key of ['phase','round','leader','team','votes','cards','ack','history','results','deadline','phaseStarted'])assert.deepEqual(r[key],before[key]);
+    assert.notEqual(turn(r),oldTurn);assert.equal(r.assassinationUsed,true);assert.equal(r.winner,undefined);
+    assert.deepEqual(view(r,assassin.id).assassinTargets,[]);assert.equal(view(r,assassin.id).canAssassinate,false);
+    assert.ok(view(r,loyal.id).players.every(p=>!('role' in p)));
+    assert.throws(()=>act(r,assassin.id,{type:'assassinate',target:loyal.id},NOW),/机会已用尽/);
+  }
+});
+test('提前刺杀未中后，三次成功直接好人胜，三次失败仍坏人胜；重开恢复机会',()=>{
+  for(const n of [5,6,7,8])for(const pace of ['host','timer'])for(const goodWins of [true,false]){
+    const r=setup(n,pace),assassin=r.players.find(p=>p.role==='assassin'),loyal=r.players.find(p=>p.role==='loyal');
+    act(r,assassin.id,{type:'assassinate',target:loyal.id},NOW);
+    for(let i=0;i<3;i++){
+      if(goodWins)questSuccess(r);
+      else {const bad=r.players.find(p=>view(r,p.id).evil);propose(r,[bad,...r.players.filter(p=>p!==bad).slice(0,SIZES[n][r.round]-1)]);vote(r);advance(r);for(const id of r.team)act(r,id,{type:'quest',success:id!==bad.id},NOW);advance(r);}
+    }
+    assert.equal(r.phase,'end');assert.equal(r.winner,goodWins?'good':'evil');
+    act(r,r.host,{type:'reset'},NOW);assert.equal(view(r,r.host).assassinationUsed,false);assert.equal(view(r,r.host).target,null);
+    for(const p of r.players)act(r,p.id,{type:'ready'},NOW);act(r,r.host,{type:'start'},NOW);
+    assert.equal(view(r,r.players.find(p=>p.role==='assassin').id).canAssassinate,true);
+  }
+});
